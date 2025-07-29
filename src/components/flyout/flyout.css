@@ -1,0 +1,13 @@
+/* Dark theme flyout */
+.blocklyFlyout {
+    background: #1E1E1E !important;
+    border-left: 2px solid #FF3131;
+    color: #FAFAFA;
+    box-shadow: inset 0 0 8px rgba(255, 51, 49, 0.25);
+}
+
+.blocklyFlyoutBackground {
+    fill: #1E1E1E !important;
+    stroke: #FF3131;
+    stroke-width: 1px;
+}

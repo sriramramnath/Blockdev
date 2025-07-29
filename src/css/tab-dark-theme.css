@@ -1,0 +1,46 @@
+@import "../../css/colors.css";
+@import "../../css/units.css";
+
+/* Dark theme for react-tabs */
+:global(.react-tabs) {
+    background: $ui-primary;
+}
+
+:global(.react-tabs__tab-list) {
+    background: $ui-primary;
+    border-bottom: 2px solid $motion-primary;
+    margin: 0;
+    padding: 0;
+}
+
+:global(.react-tabs__tab) {
+    background: $ui-primary;
+    border: 2px solid transparent;
+    border-bottom: 0;
+    color: $ui-white;
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px 4px 0 0;
+}
+
+:global(.react-tabs__tab:hover) {
+    background: $ui-secondary;
+}
+
+:global(.react-tabs__tab--selected) {
+    background: $ui-secondary;
+    border-color: $motion-primary;
+    color: $motion-primary;
+}
+
+:global(.react-tabs__tab-panel) {
+    background: $ui-secondary;
+    border: 2px solid $motion-primary;
+    border-top: 0;
+}
+
+:global(.react-tabs__tab:focus) {
+    box-shadow: 0 0 4px $motion-primary;
+    border-color: $motion-primary;
+    outline: none;
+}

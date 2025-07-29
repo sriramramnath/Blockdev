@@ -1,0 +1,125 @@
+.withChatGPT {
+    margin-left: 25% !important;
+    width: 75% !important;
+    background: #1A1A1A !important;
+    color: #E6D5BC !important;
+}
+
+/* Dark Roman theme overrides for Scratch GUI */
+:global(.blocklyMainBackground) {
+    fill: #252525 !important;
+}
+
+:global(.blocklyToolboxDiv) {
+    background: #2A2A2A !important;
+    border-right: 2px solid #65272C !important;
+}
+
+:global(.scratchCategoryMenuItem.selectedItem) {
+    background: #65272C !important;
+}
+
+:global(.scratchCategoryMenuItem:hover) {
+    background: rgba(101, 39, 44, 0.8) !important;
+}
+
+:global(.menu-bar_menu-bar_3w9z5) {
+    background: #252525 !important;
+    border-bottom: 2px solid #65272C !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+:global(.stage-header_stage-header-wrapper-overlay_5vfJj) {
+    background: #252525 !important;
+    border: 2px solid #65272C !important;
+}
+
+:global(.sprite-selector_sprite-selector_2KgCX) {
+    background: #252525 !important;
+    border: 2px solid #65272C !important;
+}
+
+:global(.button_button_u6SE5) {
+    border: 1px solid #65272C !important;
+    background: #1A1A1A !important;
+    color: #E6D5BC !important;
+    font-family: 'Trajan Pro', 'system-ui', sans-serif !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
+:global(.button_button_u6SE5:hover) {
+    background: #65272C !important;
+    color: #E6D5BC !important;
+}
+
+:global(.sprite-selector-item_sprite-selector-item_kQm-i) {
+    background: #1A1A1A !important;
+    border: 1px solid #65272C !important;
+}
+
+:global(.sprite-selector-item_sprite-selector-item_kQm-i:hover) {
+    border: 1px solid #65272C !important;
+    box-shadow: 0 0 0 2px rgba(101, 39, 44, 0.4) !important;
+}
+
+:global(.stage_stage_1fD7k) {
+    border: 2px solid #65272C !important;
+    border-radius: 4px !important;
+    background: #1A1A1A !important;
+}
+
+:global(.custom-procedures_body_SQBv6) {
+    background: #1A1A1A !important;
+    color: #E6D5BC !important;
+}
+
+/* Tabs Dark Roman Style */
+:global(.react-tabs__tab) {
+    background: #252525 !important;
+    border: 1px solid #65272C !important;
+    border-bottom: none !important;
+    font-family: 'Trajan Pro', 'system-ui', sans-serif !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    color: #E6D5BC !important;
+}
+
+:global(.react-tabs__tab--selected) {
+    background: #1A1A1A !important;
+    border-color: #65272C !important;
+}
+
+/* Custom scrollbars */
+:global(*::-webkit-scrollbar) {
+    width: 6px !important;
+}
+
+:global(*::-webkit-scrollbar-track) {
+    background: #252525 !important;
+}
+
+:global(*::-webkit-scrollbar-thumb) {
+    background: #65272C !important;
+    border-radius: 3px !important;
+}
+
+/* Input fields */
+:global(input), :global(select) {
+    background: #1A1A1A !important;
+    border: 1px solid #65272C !important;
+    color: #E6D5BC !important;
+    font-family: 'system-ui', sans-serif !important;
+}
+
+/* Modal windows */
+:global(.modal_modal-overlay_1Lcbx) {
+    background: rgba(26, 26, 26, 0.9) !important;
+}
+
+:global(.modal_modal-content_1h3ll) {
+    background: #252525 !important;
+    border: 2px solid #65272C !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+    color: #E6D5BC !important;
+}

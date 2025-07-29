@@ -1,0 +1,36 @@
+/* Retro dark toolbox/sidebar */
+.blocklyToolboxDiv,
+.blocks-toolbox {
+    background: #1E1E1E !important;
+    border-right: 1px solid #FF3131;
+    color: #FFFFFF;
+    box-shadow: 0 0 8px #FF9900;
+}
+
+.scratchCategoryMenu {
+    background: #1E1E1E !important;
+}
+
+/* Category labels in toolbox */
+.blocklyTreeLabel,
+.blocks-category-label {
+    color: #FFFFFF !important;
+    font-family: "Press Start 2P", "VT323", monospace;
+    border-bottom: 1px solid #FF3131;
+}
+
+.blocklyTreeLabel:hover,
+.blocks-category-label:hover {
+    background: #2C2C2C !important;
+    color: #FF3131 !important;
+    box-shadow: 0 0 8px #FF9900;
+}
+
+.blocklyTreeRow {
+    background: #2C2C2C !important;
+    border-bottom: 1px solid rgba(255, 51, 49, 0.25);
+}
+
+.blocklyTreeRow:hover {
+    background: #363636 !important;
+}

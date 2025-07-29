@@ -1,0 +1,97 @@
+/* Dark workspace area */
+.blocklyMainWorkspace,
+.blocklyWorkspace,
+.blocks-main-workspace,
+.blocksWrapper_blocks-wrapper_1b9wj {
+    background: #121212 !important;
+    border: 2px solid #D32F2F !important;
+    box-shadow: 0 0 12px rgba(211, 47, 47, 0.25);
+}
+
+/* Block area backgrounds */
+.blocks_blocks_37P3U,
+.blocklyToolboxDiv,
+.blocklyFlyout,
+.blocklyFlyoutBackground,
+.blocklyBlockCanvas {
+    background-color: #1E1E1E !important;
+    color: #FFFFFF;
+}
+
+/* Additional workspace elements */
+.blocklySvg {
+    background-color: #121212 !important;
+}
+
+.blocklyMainBackground {
+    fill: #121212 !important;
+}
+
+/* Grid pattern */
+.blocklyGrid {
+    stroke: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Block deletion area */
+.blocklyDeleteArea {
+    background-color: #2C2C2C !important;
+    border: 2px solid #D32F2F !important;
+    box-shadow: 0 0 8px rgba(211, 47, 47, 0.5);
+}
+
+/* Block highlighting */
+.blocklySelected>.blocklyPath {
+    stroke: #F57C00 !important;
+    stroke-width: 2px !important;
+    box-shadow: 0 0 8px rgba(245, 124, 0, 0.5);
+}
+
+/* Block dragging */
+.blocklyDragging>.blocklyPath,
+.blocklyDragging>.blocklyPathLight {
+    fill-opacity: 0.9 !important;
+    stroke-opacity: 1.0 !important;
+    filter: drop-shadow(0 0 8px rgba(211, 47, 47, 0.5));
+}
+
+/* Workspace canvas and related elements */
+.blocks_blocks_37x5,
+.blocks_workspace_1s7v,
+.blocklyWorkspace,
+div[class*="blocks_blocks_"],
+div[class*="blocks_workspace_"] {
+    background: #121212 !important;
+}
+
+/* Block connection points */
+.blocklyHighlightedConnectionPath {
+    stroke: #F57C00 !important;
+    stroke-width: 3px !important;
+}
+
+/* Workspace scrollbars */
+.blocklyScrollbarHandle {
+    fill: #2C2C2C !important;
+}
+
+.blocklyScrollbarBackground:hover+.blocklyScrollbarHandle,
+.blocklyScrollbarHandle:hover {
+    fill: #D32F2F !important;
+}
+
+/* Comments and workspace annotations */
+.blocklyCommentTextarea {
+    background: #1E1E1E !important;
+    color: #FFFFFF !important;
+    border: 1px solid #D32F2F !important;
+}
+
+/* Block text and labels */
+.blocklyText {
+    fill: #FFFFFF !important;
+}
+
+/* Workspace zoom controls */
+.blocklyZoom {
+    filter: invert(1) hue-rotate(180deg);
+}

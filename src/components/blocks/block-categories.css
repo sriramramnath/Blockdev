@@ -1,0 +1,46 @@
+/* Dark theme for block categories */
+.categoryMenu {
+    background: $ui-primary;
+    border-right: 2px solid $motion-primary;
+}
+
+.blocklyFlyout {
+    background-color: $ui-primary !important;
+    border-right: 2px solid $motion-primary;
+}
+
+.blocklyFlyoutBackground {
+    fill: $ui-primary !important;
+}
+
+.blocklyToolboxDiv {
+    background-color: $ui-primary !important;
+    border-right: 2px solid $motion-primary;
+    color: $ui-white;
+}
+
+/* Block category buttons */
+.scratchCategoryMenuItem {
+    background: $ui-secondary;
+    color: $ui-white;
+    border: 1px solid $motion-primary;
+}
+
+.scratchCategoryMenuItem:hover {
+    background: $ui-tertiary;
+}
+
+.scratchCategoryMenuItem.categorySelected {
+    background: $motion-primary;
+}
+
+/* Category menu scrollbar */
+.categoryMenu ::-webkit-scrollbar {
+    width: 8px;
+    background-color: $ui-primary;
+}
+
+.categoryMenu ::-webkit-scrollbar-thumb {
+    background-color: $motion-primary;
+    border-radius: 4px;
+}

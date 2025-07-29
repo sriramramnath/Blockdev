@@ -36,10 +36,12 @@ import {resolveStageSize} from '../../lib/screen-utils';
 import {themeMap} from '../../lib/themes';
 
 import styles from './gui.css';
+import chatGPTStyles from './gui-chatgpt.css';
 import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
+import ChatGPTMock from '../chatgpt-mock/chatgpt-mock.jsx';
 import DebugModal from '../debug-modal/debug-modal.jsx';
 
 const messages = defineMessages({
@@ -164,10 +166,11 @@ const GUIComponent = props => {
             </StageWrapper>
         ) : (
             <Box
-                className={styles.pageWrapper}
+                className={classNames(styles.pageWrapper, chatGPTStyles.withChatGPT)}
                 dir={isRtl ? 'rtl' : 'ltr'}
                 {...componentProps}
             >
+                <ChatGPTMock />
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         isRtl={isRtl}

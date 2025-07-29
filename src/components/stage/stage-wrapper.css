@@ -1,0 +1,45 @@
+/* Dark theme for stage area */
+.stage-wrapper {
+    background-color: $ui-primary;
+    border: 2px solid $motion-primary;
+    border-radius: $space;
+    padding: 0.5rem;
+}
+
+.stage-header {
+    background-color: $ui-primary;
+    border-bottom: 2px solid $motion-primary;
+    color: $ui-white;
+}
+
+.stage {
+    background-color: $ui-primary;
+    border: 2px solid $motion-primary;
+}
+
+/* Stage monitor */
+.monitor-wrapper {
+    background: $ui-secondary;
+    border: 2px solid $motion-primary;
+    color: $ui-white;
+}
+
+.monitor-value {
+    color: $ui-white;
+}
+
+/* Controls */
+.controls {
+    background: $ui-primary;
+    border-top: 2px solid $motion-primary;
+}
+
+.green-flag-button, .stop-all-button {
+    background: $ui-secondary;
+    border: 2px solid $motion-primary;
+    color: $ui-white;
+}
+
+.green-flag-button:hover, .stop-all-button:hover {
+    background: $ui-tertiary;
+}

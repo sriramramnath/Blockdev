@@ -1,0 +1,102 @@
+/* Dark Theme Overrides */
+:root {
+    --workspace-bg: #121212;
+    --block-area-bg: #1A1A1A;
+    --panel-bg: #2A2A2A;
+    --toolbar-bg: #333333;
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --border-primary: #D32F2F;
+    --accent-primary: #D32F2F;
+    --accent-secondary: #F57C00;
+}
+
+/* Workspace and blocks area */
+.blocklyMainWorkspace,
+.blocklyWorkspace,
+.blocks_blocks_37P3U,
+.blocks-main-workspace {
+    background-color: var(--workspace-bg) !important;
+    color: var(--text-primary);
+}
+
+/* Block palette and flyout */
+.blocklyFlyout,
+.blocklyFlyoutBackground,
+.blocklyToolboxDiv {
+    background-color: var(--block-area-bg) !important;
+    color: var(--text-primary);
+    border-right: 2px solid var(--border-primary);
+}
+
+/* Sprite selector and other panels */
+.sprite-selector,
+.stage-selector_stage-selector,
+.target-pane_target-pane {
+    background-color: var(--panel-bg) !important;
+    color: var(--text-primary);
+    border: 2px solid var(--border-primary);
+}
+
+/* Menus and dropdowns */
+.menu,
+.context-menu_context-menu,
+.dropdown_dropdown {
+    background-color: var(--panel-bg) !important;
+    color: var(--text-primary);
+    border: 2px solid var(--border-primary);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Modal windows */
+.modal_modal-overlay {
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+.modal_modal-content {
+    background-color: var(--panel-bg);
+    color: var(--text-primary);
+    border: 2px solid var(--border-primary);
+}
+
+/* Toolbar and controls */
+.controls_controls-container,
+.menu-bar_menu-bar {
+    background-color: var(--toolbar-bg) !important;
+    color: var(--text-primary);
+}
+
+/* Button states */
+.button_button {
+    background-color: var(--accent-primary);
+    color: var(--text-primary);
+}
+
+.button_button:hover {
+    background-color: var(--accent-secondary);
+}
+
+/* Input fields */
+input[type="text"],
+input[type="number"],
+textarea {
+    background-color: var(--block-area-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+    background-color: var(--block-area-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--accent-primary);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent-secondary);
+}
