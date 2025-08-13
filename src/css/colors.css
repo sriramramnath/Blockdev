@@ -18,35 +18,35 @@ $ui-green-2: hsla(163, 85%, 40%, 1); /* #0FBD8C */
 $text-primary: hsla(225, 15%, 40%, 1); /* #575E75 */
 $text-primary-transparent: hsla(225, 15%, 40%, 0.75);
 
-$motion-primary: hsla(0, 78%, 50%, 1); /* #D32F2F - Primary Red */
-$motion-tertiary: hsla(27, 100%, 48%, 1); /* #F57C00 - Hover/Active Orange */
+$motion-primary: hsla(355, 44%, 27%); /* #D32F2F - Primary Red */
+$motion-tertiary: hsla(355, 44%, 27%); /* #F57C00 - Hover/Active Orange */
 
-$looks-secondary: hsla(0, 78%, 50%, 1); /* #D32F2F - Red */
+$looks-secondary: hsla(355, 44%, 27%); /* #D32F2F - Red */
 $looks-transparent: hsla(0, 78%, 50%, 0.35); /* 35% transparent red */
 $looks-light-transparent: hsla(0, 78%, 50%, 0.15); /* 15% transparent red */
 $looks-secondary-dark: hsla(0, 78%, 40%, 1); /* Darker red */
 
-$red-primary: hsla(0, 78%, 50%, 1); /* #D32F2F - Primary Red */
-$red-tertiary: hsla(27, 100%, 48%, 1); /* #F57C00 - Orange */
+$red-primary: hsla(355, 44%, 27%); /* #D32F2F - Primary Red */
+$red-tertiary: hsla(355, 44%, 27%); /* #F57C00 - Orange */
 
-$sound-primary: hsla(0, 78%, 50%, 1); /* #D32F2F - Red */
-$sound-tertiary: hsla(27, 100%, 48%, 1); /* #F57C00 - Orange */
+$sound-primary: hsla(355, 44%, 27%); /* #D32F2F - Red */
+$sound-tertiary: hsla(355, 44%, 27%); /* #F57C00 - Orange */
 
-$control-primary: hsla(0, 78%, 50%, 1); /* #D32F2F - Red */
+$control-primary: hsla(355, 44%, 27%); /* #D32F2F - Red */
 
-$data-primary: hsla(0, 78%, 50%, 1); /* #D32F2F - Red */
+$data-primary: hsla(355, 44%, 27%); /* #D32F2F - Red */
 
-$pen-primary: hsla(0, 78%, 50%, 1); /* #D32F2F - Red */
+$pen-primary: hsla(355, 44%, 27%); /* #D32F2F - Red */
 $pen-transparent: hsla(0, 78%, 50%, 0.25); /* 25% transparent red */
-$pen-tertiary: hsla(27, 100%, 48%, 1); /* #F57C00 - Orange */
+$pen-tertiary: hsla(355, 44%, 27%); /* #F57C00 - Orange */
 
 $error-primary: hsla(14, 77%, 46%, 1); /* #D84315 - Error red */
 $error-light: hsla(14, 77%, 56%, 1); /* Lighter error red */
 $error-transparent: hsla(14, 77%, 46%, 0.25); /* 25% transparent error red */
 
-$extensions-primary: hsla(0, 78%, 50%, 1); /* #D32F2F - Red */
-$extensions-tertiary: hsla(27, 100%, 48%, 1); /* #F57C00 - Orange */
+$extensions-primary: hsla(355, 44%, 27%); /* #D32F2F - Red */
+$extensions-tertiary: hsla(355, 44%, 27%); /* #F57C00 - Orange */
 $extensions-transparent: hsla(0, 78%, 50%, 0.35); /* 35% transparent red */
 $extensions-light: hsla(0, 78%, 60%, 1); /* Lighter red */
 
-$drop-highlight: hsla(27, 100%, 48%, 1); /* #F57C00 - Orange */
+$drop-highlight: hsla(355, 44%, 27%); /* #F57C00 - Orange */
