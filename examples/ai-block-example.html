@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Block Generator Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .input-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        textarea {
+            width: 100%;
+            height: 60px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #4C97FF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #3373CC;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4fd;
+            border-radius: 5px;
+            border-left: 4px solid #4C97FF;
+        }
+        .block-preview {
+            background-color: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-family: monospace;
+        }
+        .examples {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+        }
+        .example-item {
+            cursor: pointer;
+            padding: 5px;
+            margin: 2px 0;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+        .example-item:hover {
+            background-color: #fff;
+        }
+        .xml-output {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI Block Generator Example</h1>
+        <p>This example demonstrates how the AI block generator creates Scratch blocks from natural language descriptions, including proper default values.</p>
+        
+        <div class="input-section">
+            <h3>Enter your request:</h3>
+            <textarea id="userInput" placeholder="Describe the block you want... (e.g., 'repeat 10 times', 'move forward 20 steps')"></textarea>
+            <button onclick="generateBlocks()">Generate Blocks</button>
+        </div>
+        
+        <div class="examples">
+            <h3>Try these examples (click to use):</h3>
+            <div class="example-item" onclick="setInput('move 10 steps')">move 10 steps</div>
+            <div class="example-item" onclick="setInput('say [I have moved 10 steps!] for 2 seconds')">say [I have moved 10 steps!] for 2 seconds</div>
+            <div class="example-item" onclick="setInput('repeat 5 times')">repeat 5 times</div>
+            <div class="example-item" onclick="setInput('turn left 90 degrees')">turn left 90 degrees</div>
+            <div class="example-item" onclick="setInput('wait 2.5 seconds')">wait 2.5 seconds</div>
+            <div class="example-item" onclick="setInput('say &quot;Hello World&quot;')">say "Hello World"</div>
+            <div class="example-item" onclick="setInput('think [What should I do?] for 3 seconds')">think [What should I do?] for 3 seconds</div>
+            <div class="example-item" onclick="setInput('pick random 1 to 100')">pick random 1 to 100</div>
+            <div class="example-item" onclick="setInput('add 5 and 3')">add 5 and 3</div>
+            <div class="example-item" onclick="setInput('create variable called score')">create variable called score</div>
+        </div>
+        
+        <div id="results" class="results" style="display: none;">
+            <h3>Generated Blocks:</h3>
+            <div id="blockList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated AI Block Generator (simplified version for demo)
+        const BLOCK_CATEGORIES = {
+            motion: { color: '#4C97FF', secondaryColor: '#4280D7', tertiaryColor: '#3373CC' },
+            looks: { color: '#9966FF', secondaryColor: '#855CD6', tertiaryColor: '#774DCB' },
+            sound: { color: '#CF63CF', secondaryColor: '#C94FC9', tertiaryColor: '#BD42BD' },
+            events: { color: '#FFBF00', secondaryColor: '#E6AC00', tertiaryColor: '#CC9900' },
+            control: { color: '#FFAB19', secondaryColor: '#EC9C13', tertiaryColor: '#CF8B17' },
+            sensing: { color: '#5CB3D6', secondaryColor: '#47A8D1', tertiaryColor: '#2E8EB8' },
+            operators: { color: '#59C059', secondaryColor: '#46B946', tertiaryColor: '#389438' },
+            variables: { color: '#FF8C1A', secondaryColor: '#FF8000', tertiaryColor: '#DB6E00' }
+        };
+
+        function generateBlockId() {
+            return 'ai_block_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function handleAISuggestion(text) {
+            const blocks = [];
+            const processedText = text.toLowerCase().trim();
+            
+            // Repeat pattern
+            const repeatMatch = processedText.match(/\b(repeat|loop)\b.*?(\d+)\s*(times?)?/i);
+            if (repeatMatch) {
+                blocks.push({
+                    id: generateBlockId(),
+                    type: 'loop',
+                    label: 'repeat %1',
+                    category: 'control',
+                    inputs: [{ type: 'input_value', name: 'TIMES' }],
+                    defaultValues: { TIMES: repeatMatch[2] || '10' },
+                    tooltip: 'Run the blocks inside this loop a specified number of times'
+                });
+            }
+            
+            // Move pattern
+            const moveMatch = processedText.match(/\bmove\b.*?(\d+)\s*(steps?|pixels?)?/i);
+            if (moveMatch) {
+                blocks.push({
+                    id: 'motion_movesteps', // Use existing Scratch block type
+                    type: 'command',
+                    label: 'move %1 steps',
+                    category: 'motion',
+                    inputs: [{ type: 'input_value', name: 'STEPS' }],
+                    defaultValues: { STEPS: moveMatch[1] || '10' },
+                    tooltip: 'Move the sprite forward by the specified number of steps'
+                });
+            }
+            
+            // Say for seconds pattern (check this first before regular say)
+            const sayForSecsMatch = processedText.match(/\bsay\s+\[([^\]]+)\]\s+for\s+(\d+(?:\.\d+)?)\s*seconds?/i);
+            if (sayForSecsMatch) {
+                blocks.push({
+                    id: 'looks_sayforsecs', // Use existing Scratch block type
+                    type: 'command',
+                    label: 'say %1 for %2 seconds',
+                    category: 'looks',
+                    inputs: [
+                        { type: 'input_value', name: 'MESSAGE' },
+                        { type: 'input_value', name: 'SECS' }
+                    ],
+                    defaultValues: { 
+                        MESSAGE: sayForSecsMatch[1] || 'Hello!',
+                        SECS: sayForSecsMatch[2] || '2'
+                    },
+                    tooltip: 'Display a speech bubble with the message for the specified time'
+                });
+            }
+            // Regular say pattern (only if say for seconds didn't match)
+            else {
+                const sayMatch = processedText.match(/\bsay\b.*?"([^"]+)"/i) || processedText.match(/\bsay\b.*?\b(hello|hi)/i);
+                if (sayMatch) {
+                    blocks.push({
+                        id: 'looks_say', // Use existing Scratch block type
+                        type: 'command',
+                        label: 'say %1',
+                        category: 'looks',
+                        inputs: [{ type: 'input_value', name: 'MESSAGE' }],
+                        defaultValues: { MESSAGE: sayMatch[1] || 'Hello!' },
+                        tooltip: 'Display a speech bubble with the specified message'
+                    });
+                }
+            }
+            
+            // Think for seconds pattern
+            const thinkForSecsMatch = processedText.match(/\bthink\s+\[([^\]]+)\]\s+for\s+(\d+(?:\.\d+)?)\s*seconds?/i);
+            if (thinkForSecsMatch) {
+                blocks.push({
+                    id: 'looks_thinkforsecs', // Use existing Scratch block type
+                    type: 'command',
+                    label: 'think %1 for %2 seconds',
+                    category: 'looks',
+                    inputs: [
+                        { type: 'input_value', name: 'MESSAGE' },
+                        { type: 'input_value', name: 'SECS' }
+                    ],
+                    defaultValues: { 
+                        MESSAGE: thinkForSecsMatch[1] || 'Hmm...',
+                        SECS: thinkForSecsMatch[2] || '2'
+                    },
+                    tooltip: 'Display a thought bubble with the message for the specified time'
+                });
+            }
+            
+            // Turn pattern
+            const turnMatch = processedText.match(/\bturn\s+(left|right)\b.*?(\d+)\s*(degrees?)?/i);
+            if (turnMatch) {
+                const direction = turnMatch[1].toLowerCase();
+                const blockType = direction === 'left' ? 'motion_turnleft' : 'motion_turnright';
+                const symbol = direction === 'left' ? '↺' : '↻';
+                blocks.push({
+                    id: blockType, // Use existing Scratch block type
+                    type: 'command',
+                    label: `turn ${symbol} %1 degrees`,
+                    category: 'motion',
+                    inputs: [{ type: 'input_value', name: 'DEGREES' }],
+                    defaultValues: { DEGREES: turnMatch[2] || '15' },
+                    tooltip: `Turn the sprite ${direction} by the specified number of degrees`
+                });
+            }
+            
+            // Wait pattern
+            const waitMatch = processedText.match(/\bwait\b.*?(\d+(?:\.\d+)?)\s*(seconds?)?/i);
+            if (waitMatch) {
+                blocks.push({
+                    id: 'control_wait', // Use existing Scratch block type
+                    type: 'command',
+                    label: 'wait %1 seconds',
+                    category: 'control',
+                    inputs: [{ type: 'input_value', name: 'DURATION' }],
+                    defaultValues: { DURATION: waitMatch[1] || '1' },
+                    tooltip: 'Wait for the specified number of seconds'
+                });
+            }
+            
+            // Say pattern - removed since it's handled above
+            
+            // Key press pattern
+            const keyMatch = processedText.match(/\bwhen\s+(\w+)\s+key\s+pressed/i);
+            if (keyMatch) {
+                blocks.push({
+                    id: generateBlockId(),
+                    type: 'hat',
+                    label: 'when [%1] key pressed',
+                    category: 'events',
+                    inputs: [{ type: 'field_dropdown', name: 'KEY_OPTION' }],
+                    defaultValues: { KEY_OPTION: keyMatch[1] || 'space' },
+                    tooltip: `Run the blocks below when the ${keyMatch[1]} key is pressed`
+                });
+            }
+            
+            // Random pattern
+            const randomMatch = processedText.match(/\brandom\b.*?(\d+).*?(\d+)/i);
+            if (randomMatch) {
+                blocks.push({
+                    id: generateBlockId(),
+                    type: 'reporter',
+                    label: 'pick random %1 to %2',
+                    category: 'operators',
+                    inputs: [
+                        { type: 'input_value', name: 'FROM' },
+                        { type: 'input_value', name: 'TO' }
+                    ],
+                    defaultValues: { FROM: randomMatch[1], TO: randomMatch[2] },
+                    tooltip: 'Generate a random number between two values'
+                });
+            }
+            
+            // Math operations
+            const mathMatch = processedText.match(/\b(add|plus)\b.*?(\d+).*?(\d+)/i);
+            if (mathMatch) {
+                blocks.push({
+                    id: generateBlockId(),
+                    type: 'reporter',
+                    label: '%1 + %2',
+                    category: 'operators',
+                    inputs: [
+                        { type: 'input_value', name: 'NUM1' },
+                        { type: 'input_value', name: 'NUM2' }
+                    ],
+                    defaultValues: { NUM1: mathMatch[2], NUM2: mathMatch[3] },
+                    tooltip: 'Add two numbers'
+                });
+            }
+            
+            // Variable pattern
+            const varMatch = processedText.match(/\bvariable\s+called\s+(\w+)/i);
+            if (varMatch) {
+                blocks.push({
+                    id: generateBlockId(),
+                    type: 'command',
+                    label: 'set [%1] to %2',
+                    category: 'variables',
+                    inputs: [
+                        { type: 'field_variable', name: 'VARIABLE' },
+                        { type: 'input_value', name: 'VALUE' }
+                    ],
+                    defaultValues: { VARIABLE: varMatch[1], VALUE: '0' },
+                    tooltip: `Set the variable "${varMatch[1]}" to the specified value`
+                });
+            }
+            
+            return blocks;
+        }
+
+        function createToolboxXML(block) {
+            let xml = `<block type="${block.id}">`;
+            
+            if (block.inputs && block.inputs.length > 0) {
+                block.inputs.forEach(input => {
+                    if (input.type === 'input_value') {
+                        const defaultValue = block.defaultValues?.[input.name] || '';
+                        xml += `\n  <value name="${input.name}">`;
+                        
+                        if (input.name.includes('NUM') || input.name.includes('TIMES') || 
+                            input.name.includes('STEPS') || input.name.includes('DEGREES') || 
+                            input.name.includes('DURATION') || input.name.includes('FROM') || 
+                            input.name.includes('TO') || input.name.includes('SECS')) {
+                            xml += `\n    <shadow type="math_number">`;
+                            xml += `\n      <field name="NUM">${defaultValue}</field>`;
+                            xml += `\n    </shadow>`;
+                        } else {
+                            xml += `\n    <shadow type="text">`;
+                            xml += `\n      <field name="TEXT">${defaultValue}</field>`;
+                            xml += `\n    </shadow>`;
+                        }
+                        
+                        xml += `\n  </value>`;
+                    }
+                });
+            }
+            
+            xml += `\n</block>`;
+            return xml;
+        }
+
+        function setInput(text) {
+            document.getElementById('userInput').value = text;
+        }
+
+        function generateBlocks() {
+            const input = document.getElementById('userInput').value;
+            if (!input.trim()) {
+                alert('Please enter a block description');
+                return;
+            }
+            
+            const blocks = handleAISuggestion(input);
+            const resultsDiv = document.getElementById('results');
+            const blockListDiv = document.getElementById('blockList');
+            
+            if (blocks.length === 0) {
+                blockListDiv.innerHTML = '<p>No matching patterns found. Try rephrasing your request.</p>';
+            } else {
+                let html = '';
+                blocks.forEach((block, index) => {
+                    const category = BLOCK_CATEGORIES[block.category] || BLOCK_CATEGORIES.control;
+                    const toolboxXML = createToolboxXML(block);
+                    
+                    html += `
+                        <div class="block-preview">
+                            <h4 style="color: ${category.color}; margin: 0 0 10px 0;">
+                                📦 ${block.category.toUpperCase()} Block
+                            </h4>
+                            <p><strong>Label:</strong> ${block.label}</p>
+                            <p><strong>Type:</strong> ${block.type}</p>
+                            <p><strong>Default Values:</strong> ${JSON.stringify(block.defaultValues || {})}</p>
+                            <p><strong>Tooltip:</strong> ${block.tooltip}</p>
+                            <details>
+                                <summary>Toolbox XML (with default values)</summary>
+                                <div class="xml-output">${escapeHtml(toolboxXML)}</div>
+                            </details>
+                        </div>
+                    `;
+                });
+                blockListDiv.innerHTML = html;
+            }
+            
+            resultsDiv.style.display = 'block';
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Allow Enter key to generate blocks
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                generateBlocks();
+            }
+        });
+    </script>
+</body>
+</html>

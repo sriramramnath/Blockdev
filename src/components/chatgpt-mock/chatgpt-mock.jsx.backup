@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './chatgpt-mock.css';
-// Use the centralized AI workspace integration instead of direct placement
+import { placeBlocksInWorkspace } from '../../lib/simple-block-placer';
 import './roman-global-theme.css'; // Import global Roman theme
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { handleAISuggestion, createBlockJSON } from '../../lib/ai-block-generator';
@@ -9,7 +9,7 @@ const ChatGPTMock = ({ visible = false, onClose, onBlocksGenerated }) => {
     const [messages, setMessages] = useState([
         {
             role: 'assistant',
-            content: 'Hey there! What question would you like to ask Maximus?'
+            content: 'Ave! What counsel do you seek from the Oracle of Maximus?'
         }
     ]);
     const [input, setInput] = useState('');
@@ -41,7 +41,7 @@ const ChatGPTMock = ({ visible = false, onClose, onBlocksGenerated }) => {
                     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
                     
                     // System prompt to set the character
-                    const systemPrompt = "You are Maximus, A helpful and friendly assistant";
+                    const systemPrompt = "You are Maximus, a Roman commander.Respond with a minimum of 3 sentences. Speak with the clarity and confidence of a seasoned general. Draw on Roman history, warfare, and strategy—referencing leaders like Caesar, Scipio, and Trajan when fitting. Your words are sharp, disciplined, and purposeful. No drama, no poetry—only the logic and pride of a Roman who commands respect.";
                     
                     // Try a simpler approach using a standard chat session
                     const chatSession = model.startChat();
@@ -190,40 +190,51 @@ Be specific about the sequence of actions and speak like a Roman general plannin
                 }
             }
             
-            // Always use the centralized integration to create real, functional blocks
-            if (extractedBlocks.length > 0) {
-                // Always add "when flag clicked" at the beginning
+            // Place blocks directly in workspace if we found it
+            if (workspace && extractedBlocks.length > 0) {
+                try {
+                    console.log('Placing blocks directly in workspace');
+                    placeBlocksInWorkspace(extractedBlocks, workspace);
+                    
+                    // Add a system message about blocks being generated
+                    const blockMessage = {
+                        role: 'assistant',
+                        content: `Hail! I have analyzed the strategy and forged ${extractedBlocks.length} blocks for your construction! The blocks are now positioned in your workspace, ready for battle!`
+                    };
+                    setMessages(prev => [...prev, blockMessage]);
+                } catch (error) {
+                    console.error('Error placing blocks in workspace:', error);
+                }
+            } else if (extractedBlocks.length > 0) {
+                console.log('Falling back to callback method');
+                // Fallback to existing integration method
+                // Always add "when flag clicked" at the beginning if not present
                 const flagBlock = {
-                    id: 'event_whenflagclicked', // real Scratch hat
+                    id: 'event_whenflagclicked', // Use actual Scratch block type
                     type: 'hat',
-                    label: 'when green flag clicked',
+                    label: 'when ⚑ clicked',
                     category: 'events',
-                    inputs: []
+                    inputs: [],
+                    tooltip: 'Start the program when the green flag is clicked'
                 };
-
+                
                 const allBlocks = [flagBlock, ...extractedBlocks];
-
-                if (onBlocksGenerated) {
-                    onBlocksGenerated(allBlocks);
-                } else if (typeof window !== 'undefined' && window.handleAIGeneratedBlocks) {
-                    window.handleAIGeneratedBlocks(allBlocks);
-                }
-
-                // Also update toolbox suggestions if available
-                if (typeof window !== 'undefined' && window.processAISuggestion) {
-                    try {
-                        const result = window.processAISuggestion(input);
-                        console.log('AI toolbox update result:', result);
-                    } catch (e) {
-                        console.warn('Unable to update toolbox with AI blocks:', e);
+                
+                // Send blocks to workspace if callback available
+                if (allBlocks.length > 1) { // More than just the flag block
+                    if (onBlocksGenerated) {
+                        onBlocksGenerated(allBlocks);
+                    } else if (typeof window !== 'undefined' && window.handleAIGeneratedBlocks) {
+                        window.handleAIGeneratedBlocks(allBlocks);
                     }
+                    
+                    // Add a system message about blocks being generated
+                    const blockMessage = {
+                        role: 'assistant',
+                        content: `Hail! I have analyzed the strategy and forged ${allBlocks.length} blocks for your construction, including the sacred flag bearer! Check your workspace for the new blocks!`
+                    };
+                    setMessages(prev => [...prev, blockMessage]);
                 }
-
-                const blockMessage = {
-                    role: 'assistant',
-                    content: `Hail! I have analyzed the strategy and forged ${allBlocks.length} blocks for your construction! The blocks are now positioned in your workspace, ready for battle!`
-                };
-                setMessages(prev => [...prev, blockMessage]);
             }
             
             const assistantMessage = { 
@@ -238,7 +249,7 @@ Be specific about the sequence of actions and speak like a Roman general plannin
                 ...prev, 
                 { 
                     role: 'assistant', 
-                    content: "Maximus is busy right now, but feel free to ask him any questions later!" 
+                    content: "The Oracle's vision is clouded. Please seek wisdom again later." 
                 }
             ]);
         } finally {
@@ -248,13 +259,209 @@ Be specific about the sequence of actions and speak like a Roman general plannin
 
     // Function to extract blocks from AI response text
     const extractBlocksFromResponse = (text) => {
+        const blocks = [];
+        
+        // Always add "when flag clicked" first
+        blocks.push({
+            id: 'event_whenflagclicked',
+            type: 'hat',
+            label: 'when ⚑ clicked',
+            category: 'events',
+            inputs: [],
+            tooltip: 'Start the program when the green flag is clicked'
+        });
+        
         console.log('Raw AI response text:', text);
         
-        // Use the AI block generator to process the text
-        const generatedBlocks = handleAISuggestion(text);
-        console.log('Generated blocks from AI generator:', generatedBlocks);
+        // Enhanced patterns to match the AI output format
         
-        return generatedBlocks;
+        // Movement patterns - improved to catch various formats
+        const movePatterns = [
+            /\*\*`move\s+(\d+)\s+steps`\*\*/gi,  // **`move 50 steps`**
+            /move\s+(\d+)\s+steps/gi,             // move 50 steps
+            /advance[,\s]*(\d+)\s+(?:steps|paces)/gi,  // Advance, fifty paces!
+            /(\d+)\s+(?:steps|paces)/gi           // 50 steps
+        ];
+        
+        movePatterns.forEach(pattern => {
+            const matches = text.match(pattern);
+            if (matches) {
+                matches.forEach(match => {
+                    const numberMatch = match.match(/(\d+)/);
+                    if (numberMatch) {
+                        const steps = numberMatch[1];
+                        console.log('Found move pattern:', match, 'extracted steps:', steps);
+                        blocks.push({
+                            id: 'motion_movesteps',
+                            type: 'command',
+                            label: `move ${steps} steps`,
+                            category: 'motion',
+                            inputs: [{ name: 'STEPS', value: steps }],
+                            tooltip: `Move the sprite forward by ${steps} steps`
+                        });
+                    }
+                });
+            }
+        });
+        
+        // Wait patterns - improved to catch various formats
+        const waitPatterns = [
+            /\*\*`wait\s+(\d+(?:\.\d+)?)\s+seconds`\*\*/gi,  // **`wait 1 seconds`**
+            /wait\s+(\d+(?:\.\d+)?)\s+seconds?/gi,           // wait 1 seconds
+            /pause\s+(\d+(?:\.\d+)?)\s+seconds?/gi           // pause 1 seconds
+        ];
+        
+        waitPatterns.forEach(pattern => {
+            const matches = text.match(pattern);
+            if (matches) {
+                matches.forEach(match => {
+                    const numberMatch = match.match(/(\d+(?:\.\d+)?)/);
+                    if (numberMatch) {
+                        const seconds = numberMatch[1];
+                        console.log('Found wait pattern:', match, 'extracted seconds:', seconds);
+                        blocks.push({
+                            id: 'control_wait',
+                            type: 'command',
+                            label: `wait ${seconds} seconds`,
+                            category: 'control',
+                            inputs: [{ name: 'DURATION', value: seconds }],
+                            tooltip: `Wait for ${seconds} seconds`
+                        });
+                    }
+                });
+            }
+        });
+        
+        // Say patterns - improved to handle structured format
+        const sayPatterns = [
+            /\*\*`say\s+\[([^\]]+)\](?:\s+for\s+(\d+)\s+seconds)?\s*`\*\*/gi,  // **`say [message] for 2 seconds`**
+            /say\s+\[([^\]]+)\](?:\s+for\s+(\d+)\s+seconds)?/gi,               // say [message] for 2 seconds
+            /say\s+[""]([^"""]+)[""](?:\s+for\s+(\d+)\s+seconds)?/gi,          // say "message" for 2 seconds
+            /announce\s+[""]([^"""]+)[""](?:\s+for\s+(\d+)\s+seconds)?/gi      // announce "message"
+        ];
+        
+        sayPatterns.forEach(pattern => {
+            const matches = [...text.matchAll(pattern)];
+            matches.forEach(match => {
+                const message = match[1];
+                const duration = match[2] || '2'; // Default to 2 seconds
+                if (message && message.trim()) {
+                    console.log('Found say pattern:', match[0], 'extracted message:', message, 'duration:', duration);
+                    blocks.push({
+                        id: 'looks_sayforsecs',
+                        type: 'command',
+                        label: `say "${message}" for ${duration} seconds`,
+                        category: 'looks',
+                        inputs: [
+                            { name: 'MESSAGE', value: message.trim() },
+                            { name: 'SECS', value: duration }
+                        ],
+                        tooltip: `Display a speech bubble with "${message}" for ${duration} seconds`
+                    });
+                }
+            });
+        });
+        
+        // Think patterns - improved to handle structured format
+        const thinkPatterns = [
+            /\*\*`think\s+\[([^\]]+)\](?:\s+for\s+(\d+)\s+seconds)?\s*`\*\*/gi,  // **`think [message] for 3 seconds`**
+            /think\s+\[([^\]]+)\](?:\s+for\s+(\d+)\s+seconds)?/gi,               // think [message] for 3 seconds
+            /think\s+[""]([^"""]+)[""](?:\s+for\s+(\d+)\s+seconds)?/gi           // think "message" for 3 seconds
+        ];
+        
+        thinkPatterns.forEach(pattern => {
+            const matches = [...text.matchAll(pattern)];
+            matches.forEach(match => {
+                const message = match[1];
+                const duration = match[2] || '2'; // Default to 2 seconds
+                if (message && message.trim()) {
+                    console.log('Found think pattern:', match[0], 'extracted message:', message, 'duration:', duration);
+                    blocks.push({
+                        id: 'looks_thinkforsecs',
+                        type: 'command',
+                        label: `think "${message}" for ${duration} seconds`,
+                        category: 'looks',
+                        inputs: [
+                            { name: 'MESSAGE', value: message.trim() },
+                            { name: 'SECS', value: duration }
+                        ],
+                        tooltip: `Display a thought bubble with "${message}" for ${duration} seconds`
+                    });
+                }
+            });
+        });
+        
+        // Turn/rotation patterns - improved to handle structured format
+        const turnPatterns = [
+            /\*\*`turn\s+(left|right)\s+(\d+)\s+degrees?`\*\*/gi,    // **`turn left 90 degrees`**
+            /turn\s+(left|right)\s+(\d+)\s+degrees?/gi,             // turn left 90 degrees
+            /rotate\s+(left|right)\s+(\d+)\s+degrees?/gi            // rotate left 90 degrees
+        ];
+        
+        turnPatterns.forEach(pattern => {
+            const matches = [...text.matchAll(pattern)];
+            matches.forEach(match => {
+                const direction = match[1].toLowerCase();
+                const degrees = match[2];
+                if (direction && degrees) {
+                    const blockType = direction === 'left' ? 'motion_turnleft' : 'motion_turnright';
+                    const symbol = direction === 'left' ? '↺' : '↻';
+                    console.log('Found turn pattern:', match[0], 'direction:', direction, 'degrees:', degrees);
+                    blocks.push({
+                        id: blockType,
+                        type: 'command',
+                        label: `turn ${symbol} ${degrees} degrees`,
+                        category: 'motion',
+                        inputs: [{ name: 'DEGREES', value: degrees }],
+                        tooltip: `Turn the sprite ${direction} by ${degrees} degrees`
+                    });
+                }
+            });
+        });
+        
+        // Sound patterns - use actual Scratch block types
+        const soundMatches = text.match(/play\s+(?:a\s+)?(?:sound|beep|noise)|emit\s+.*?(?:sound|beep)|make.*?sound/gi);
+        if (soundMatches && soundMatches.length > 0) {
+            blocks.push({
+                id: 'sound_play', // Use actual Scratch block type
+                type: 'command',
+                label: 'play sound until done',
+                category: 'sound',
+                inputs: [],
+                tooltip: 'Play a sound and wait until it finishes'
+            });
+        }
+        
+        // Forever/repeat patterns - use actual Scratch block types
+        const foreverMatches = text.match(/(?:repeat|loop|continue).*?(?:forever|eternally|endless|infinitely)|forever|eternally/gi);
+        if (foreverMatches && foreverMatches.length > 0) {
+            blocks.push({
+                id: 'control_forever', // Use actual Scratch block type
+                type: 'loop',
+                label: 'forever',
+                category: 'control',
+                inputs: [],
+                tooltip: 'Run the blocks inside this loop forever'
+            });
+        }
+        
+        // Repeat X times patterns - use actual Scratch block types
+        const repeatMatches = text.match(/repeat\s+(\d+)\s+times?/gi);
+        if (repeatMatches) {
+            repeatMatches.forEach(match => {
+                const times = match.match(/(\d+)/)[1];
+                blocks.push({
+                    id: 'control_repeat', // Use actual Scratch block type
+                    type: 'loop',
+                    label: `repeat ${times}`,
+                    category: 'control',
+                    inputs: [{ name: 'TIMES', value: times }],
+                    tooltip: `Run the blocks inside this loop ${times} times`
+                });
+            });
+        }
+        
+        return blocks;
     };
 
     // If not visible, don't render anything
@@ -264,7 +471,7 @@ Be specific about the sequence of actions and speak like a Roman general plannin
         <div className={styles.chatgptContainer}>
             <div className={styles.header}>
                 <span className={styles.headerDecor}></span>
-                Maximus
+                MAXIMUS
                 <span className={styles.headerDecor}></span>
                 {onClose && (
                     <button className={styles.closeButton} onClick={onClose}>
@@ -304,7 +511,7 @@ Be specific about the sequence of actions and speak like a Roman general plannin
                 <input 
                     type="text" 
                     className={styles.input} 
-                    placeholder="Ask your question to the Maximus..."
+                    placeholder="Inscribe your query to the Oracle..."
                     value={input}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}

@@ -43,6 +43,7 @@ import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
 import ChatGPTMock from '../chatgpt-mock/chatgpt-mock.jsx';
 import DebugModal from '../debug-modal/debug-modal.jsx';
+import '../../lib/debug-block-placer.js';
 
 const messages = defineMessages({
     addExtension: {
@@ -170,7 +171,7 @@ const GUIComponent = props => {
                 dir={isRtl ? 'rtl' : 'ltr'}
                 {...componentProps}
             >
-                <ChatGPTMock />
+                <ChatGPTMock visible={true} />
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         isRtl={isRtl}

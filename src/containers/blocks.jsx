@@ -20,6 +20,8 @@ import DragConstants from '../lib/drag-constants';
 import defineDynamicBlock from '../lib/define-dynamic-block';
 import {DEFAULT_THEME, getColorsForTheme, themeMap} from '../lib/themes';
 import {injectExtensionBlockTheme, injectExtensionCategoryTheme} from '../lib/themes/blockHelpers';
+import {setupAIBlockWorkspaceIntegration} from '../lib/ai-block-workspace-integration';
+import {setupAIBlockIntegration} from '../lib/ai-block-integration';
 
 import {connect} from 'react-redux';
 import {updateToolbox} from '../reducers/toolbox';
@@ -143,6 +145,32 @@ class Blocks extends React.Component {
         // If locale changes while not visible it will get handled in didUpdate
         if (this.props.isVisible) {
             this.setLocale();
+        }
+
+        // Setup AI Block Workspace Integration
+        this.aiBlockIntegration = setupAIBlockWorkspaceIntegration(this);
+        console.log('AI Block Integration initialized for workspace');
+
+    // Setup AI Block Toolbox Integration (dynamic categories/blocks)
+    setupAIBlockIntegration(this);
+    console.log('AI Block Toolbox integration initialized');
+
+        // Register global callback for AI-generated blocks
+        if (typeof window !== 'undefined') {
+            window.handleAIGeneratedBlocks = (generatedBlocks) => {
+                if (this.processTextToBlocks) {
+                    // Pass the array of blocks directly to the integration
+                    this.processTextToBlocks(generatedBlocks)
+                        .then(result => {
+                            console.log('AI blocks processed successfully:', result);
+                        })
+                        .catch(error => {
+                            console.error('Error processing AI blocks:', error);
+                        });
+                } else {
+                    console.warn('AI block processing not available yet');
+                }
+            };
         }
     }
     shouldComponentUpdate (nextProps, nextState) {

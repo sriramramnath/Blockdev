@@ -1,0 +1,86 @@
+/* Roman Global Theme for Maximus Chat */
+
+/* Roman-inspired color palette */
+:root {
+    --roman-gold: #65272C;
+    --roman-red: #8B0000;
+    --roman-ivory: #FFFFF0;
+    --roman-stone: #8B7D6B;
+    --roman-bronze: #CD7F32;
+    --roman-purple: #663399;
+    --roman-dark: #2F1B14;
+}
+
+/* Global Roman typography */
+.roman-theme {
+    font-family: 'Trajan Pro', 'Times New Roman', serif;
+    letter-spacing: 0.5px;
+}
+
+/* Roman decorative elements */
+.roman-border {
+    border: 2px solid var(--roman-gold);
+    border-image: linear-gradient(45deg, var(--roman-gold), var(--roman-bronze)) 1;
+}
+
+.roman-scroll {
+    background: linear-gradient(135deg, var(--roman-ivory) 0%, #F5F5DC 100%);
+    border-radius: 8px;
+    box-shadow: 
+        inset 0 1px 3px rgba(0,0,0,0.1),
+        0 2px 8px rgba(139, 125, 107, 0.3);
+}
+
+/* Roman text effects */
+.roman-title {
+    color: var(--roman-red);
+    text-shadow: 1px 1px 2px var(--roman-gold);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.roman-accent {
+    color: var(--roman-gold);
+    font-weight: 600;
+}
+
+/* Roman interactive elements */
+.roman-button {
+    background: linear-gradient(135deg, var(--roman-gold) 0%, var(--roman-bronze) 100%);
+    border: 1px solid var(--roman-bronze);
+    color: var(--roman-dark);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.roman-button:hover {
+    background: linear-gradient(135deg, var(--roman-bronze) 0%, var(--roman-gold) 100%);
+    box-shadow: 0 4px 12px rgba(218, 165, 32, 0.4);
+    transform: translateY(-1px);
+}
+
+/* Roman marble texture effect */
+.roman-marble {
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139,125,107,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(218,165,32,0.05) 0%, transparent 50%),
+        linear-gradient(135deg, #F8F8FF 0%, #F0F8FF 100%);
+}
+
+/* Subtle animations */
+@keyframes roman-glow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(218, 165, 32, 0.3); 
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(218, 165, 32, 0.6); 
+    }
+}
+
+.roman-glow {
+    animation: roman-glow 3s ease-in-out infinite;
+}
