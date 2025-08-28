@@ -120,7 +120,7 @@ const ChatGPTMock = ({ visible = false, onClose, onBlocksGenerated }) => {
                 // Enhanced prompt for real AI to generate programming plans
                 const enhancedPrompt = `${input.trim()}
 
-Please respond as Maximus, a Roman commander, and create a step-by-step programming plan using Scratch blocks. Your response should include specific actions like:
+Please respond as Maximus, a Roman Commander, and create a step-by-step programming plan using Scratch blocks. Your response should include specific actions like:
 - "when green flag clicked" (always start with this)
 - "move X steps" for movement
 - "turn left/right X degrees" for rotation  
@@ -130,7 +130,7 @@ Please respond as Maximus, a Roman commander, and create a step-by-step programm
 - "repeat" or "forever" for loops
 - specific numbers and messages
 
-Be specific about the sequence of actions and speak like a Roman general planning a campaign.`;
+Be specific about the sequence of actions.`;
 
                 try {
                     // Option 1: Using single string input
