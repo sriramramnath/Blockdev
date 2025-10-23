@@ -24,11 +24,13 @@
         but fixes [FFx + Safari] [resize window down + scroll to the right] bug.
         width: 100%;
     */
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: $menu-bar-standard-font-size;
-    font-weight: bold;
-    background-color: $looks-secondary;
+    font-weight: 500;
+    background: linear-gradient(135deg, $accent-primary 0%, $accent-secondary 100%);
     color: $ui-white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .main-menu {
@@ -62,6 +64,9 @@
     align-items: center;
     white-space: nowrap;
     height: $menu-bar-height;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    margin: 0 0.125rem;
 }
 
 .menu-bar-item.hoverable {
@@ -70,7 +75,9 @@
 
 .menu-bar-item.active,
 .menu-bar-item.hoverable:hover {
-    background-color: $ui-black-transparent;
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .menu-bar-item.growable {

@@ -80,6 +80,7 @@ export default appTarget => {
                 backpackHost={backpackHost}
                 canSave={false}
                 onClickLogo={onClickLogo}
+                showMaximus
             />,
         appTarget);
 };

@@ -1,0 +1,326 @@
+/* Modern UI Enhancements for Scratch GUI */
+
+/* Smooth scrolling for better UX */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Modern focus styles */
+*:focus {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Enhanced button styles */
+button {
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Modern input styles */
+input, textarea, select {
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    border: 1px solid $ui-tertiary;
+    background: $ui-secondary;
+    color: $ui-white;
+    padding: 0.5rem 0.75rem;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: $accent-primary;
+    box-shadow: 0 0 0 3px rgba(184, 134, 91, 0.1);
+    background: $ui-tertiary;
+}
+
+/* Loading animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.loading {
+    animation: pulse 2s infinite;
+}
+
+/* Shimmer effect for loading states */
+@keyframes shimmer {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.shimmer {
+    background: linear-gradient(90deg, $ui-tertiary 25%, $ui-secondary 50%, $ui-tertiary 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Modern card styles */
+.card {
+    background: linear-gradient(135deg, $ui-secondary 0%, $ui-tertiary 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Modern tooltip styles */
+.tooltip {
+    background: $ui-primary;
+    color: $ui-white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced scrollbar styles */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: $ui-secondary;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $ui-tertiary;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: $accent-primary;
+}
+
+/* Modern modal styles */
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, $ui-secondary 0%, $ui-tertiary 100%);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Enhanced dropdown styles */
+.dropdown {
+    background: $ui-secondary;
+    border: 1px solid $ui-tertiary;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-item:hover {
+    background: $ui-tertiary;
+    color: $accent-primary;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+/* Modern progress bar */
+.progress-bar {
+    background: $ui-tertiary;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 8px;
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, $accent-primary 0%, $accent-secondary 100%);
+    height: 100%;
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+/* Enhanced notification styles */
+.notification {
+    background: linear-gradient(135deg, $ui-secondary 0%, $ui-tertiary 100%);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid $accent-primary;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Modern badge styles */
+.badge {
+    background: linear-gradient(135deg, $accent-primary 0%, $accent-secondary 100%);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Enhanced table styles */
+.table {
+    background: $ui-secondary;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.table-header {
+    background: $ui-tertiary;
+    padding: 1rem;
+    font-weight: 600;
+    color: $ui-white;
+}
+
+.table-row {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s ease;
+}
+
+.table-row:hover {
+    background: $ui-tertiary;
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+/* Modern switch/toggle styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $ui-tertiary;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .slider {
+    background: $accent-primary;
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+    .card {
+        margin: 0.5rem;
+        border-radius: 8px;
+    }
+    
+    .modal-content {
+        margin: 1rem;
+        border-radius: 8px;
+    }
+    
+    button {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+    .card {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .modal-content {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+}

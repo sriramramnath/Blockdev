@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratchblocks Test</title>
+    <script src="https://scratchblocks.github.io/js/scratchblocks-v3.6.4-min.js"></script>
+</head>
+<body>
+    <h1>Scratchblocks Rendering Test</h1>
+    
+    <h2>Test 1: Simple blocks</h2>
+    <pre class="blocks">
+when flag clicked
+move (10) steps
+turn cw (90) degrees
+wait (1) seconds
+    </pre>
+    
+    <h2>Test 2: Complex blocks</h2>
+    <pre class="blocks">
+when flag clicked
+move (20) steps
+say [Hello World!] for (2) seconds
+repeat (5)
+  turn cw (72) degrees
+  move (10) steps
+    </pre>
+    
+    <h2>Test 3: Generated from AI</h2>
+    <div id="ai-generated-blocks"></div>
+    
+    <script>
+        // Render the pre-defined blocks
+        scratchblocks.renderMatching('pre.blocks', {
+            style: 'scratch3',
+            languages: ['en'],
+            scale: 1
+        });
+        
+        // Test dynamic generation
+        const aiGeneratedCode = `when flag clicked
+move (10) steps
+turn cw (90) degrees
+wait (1) seconds`;
+        
+        const container = document.getElementById('ai-generated-blocks');
+        const preElement = document.createElement('pre');
+        preElement.className = 'blocks';
+        preElement.textContent = aiGeneratedCode;
+        container.appendChild(preElement);
+        
+        // Render the dynamically created blocks
+        setTimeout(() => {
+            scratchblocks.renderMatching('#ai-generated-blocks pre.blocks', {
+                style: 'scratch3',
+                languages: ['en'],
+                scale: 1
+            });
+        }, 100);
+    </script>
+</body>
+</html>

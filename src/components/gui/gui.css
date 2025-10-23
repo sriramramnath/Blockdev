@@ -1,6 +1,7 @@
 @import "../../css/units.css";
 @import "../../css/colors.css";
 @import "../../css/z-index.css";
+@import "../../css/modern-ui.css";
 
 .page-wrapper {
     height: 100%;
@@ -8,7 +9,8 @@
 
 .body-wrapper {
     height: calc(100% - $menu-bar-height);
-    background-color: $ui-primary;
+    background: linear-gradient(135deg, $ui-primary 0%, $ui-secondary 100%);
+    transition: background 0.3s ease;
 }
 
 .body-wrapper * {
@@ -51,6 +53,14 @@
 
     display: flex;
     flex-direction: column;
+    
+    /* Add modern styling */
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, $ui-secondary 0%, $ui-tertiary 100%);
+    margin: 0.5rem;
+    padding: 0.75rem;
+    overflow: hidden;
 }
 
 .tab-list {
@@ -80,7 +90,7 @@
     padding: 0.125rem 1.25rem 0;
     font-size: 0.75rem;
 
-    background-color: $ui-tertiary;
+    background: linear-gradient(180deg, $ui-tertiary 0%, $ui-secondary 100%);
     color: $text-primary-transparent;
 
     display: flex;
@@ -89,6 +99,26 @@
 
     user-select: none;
     white-space: nowrap;
+    
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.tab:hover::before {
+    left: 100%;
 }
 
 [dir="ltr"] .tab {
@@ -119,19 +149,25 @@
 }
 
 .tab:hover {
-  background-color: $ui-primary;
+    background: linear-gradient(180deg, $ui-secondary 0%, $ui-primary 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .tab.is-selected {
     height: 90%;
-    color: $looks-secondary;
-    background-color: $ui-white;
+    color: $accent-primary;
+    background: linear-gradient(180deg, $ui-white 0%, rgba(255, 255, 255, 0.95) 100%);
     z-index: 4; /* Make sure selected is always above */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    border-color: $accent-primary;
 }
 
 .tab img {
     width: 1.375rem;
-    filter: grayscale(100%);
+    filter: grayscale(100%) brightness(0.8);
+    transition: all 0.2s ease;
 }
 
 [dir="ltr"] .tab img {
@@ -153,6 +189,12 @@
 
 .tab.is-selected img {
     filter: none;
+    transform: scale(1.05);
+}
+
+.tab:hover img {
+    filter: grayscale(50%) brightness(1.1);
+    transform: scale(1.02);
 }
 
 /* Tab style overrides from react-tabs */
@@ -210,6 +252,13 @@
 
     /* this will only ever be as wide as the stage */
     flex-basis: 0;
+    
+    /* Add subtle border radius and shadow for depth */
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, $ui-secondary 0%, $ui-tertiary 100%);
+    margin: 0.5rem;
+    padding: 0.75rem;
 }
 
 .target-wrapper {
@@ -236,10 +285,18 @@
     left: 0;
     right: 0;
     z-index: $z-index-extension-button;
-    background: $looks-secondary;
+    background: linear-gradient(135deg, $accent-primary 0%, $accent-secondary 100%);
 
-    border: 1px solid $looks-secondary;
+    border: 1px solid $accent-primary;
     box-sizing: content-box; /* To match scratch-block vertical toolbox borders */
+    border-radius: 0.5rem 0.5rem 0 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.extension-button-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
 }
 
 $fade-out-distance: 15px;
@@ -262,11 +319,27 @@ $fade-out-distance: 15px;
     width: 100%;
     height: 100%;
     cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: inherit;
+}
+
+.extension-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.extension-button:active {
+    transform: scale(0.95);
 }
 
 .extension-button-icon {
     width: 1.75rem;
     height: 1.75rem;
+    filter: brightness(0) invert(1);
+    transition: all 0.2s ease;
+}
+
+.extension-button:hover .extension-button-icon {
+    transform: scale(1.1);
 }
 
 [dir="rtl"] .extension-button-icon {

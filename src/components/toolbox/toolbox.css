@@ -1,14 +1,14 @@
 /* Retro dark toolbox/sidebar */
 .blocklyToolboxDiv,
 .blocks-toolbox {
-    background: #1E1E1E !important;
-    border-right: 1px solid #FF3131;
+    background: #000000 !important;
+    border-right: 1px solid #CC3333;
     color: #FFFFFF;
-    box-shadow: 0 0 8px #FF9900;
+    box-shadow: 0 0 8px #CC3333;
 }
 
 .scratchCategoryMenu {
-    background: #1E1E1E !important;
+    background: #000000 !important;
 }
 
 /* Category labels in toolbox */
@@ -16,21 +16,21 @@
 .blocks-category-label {
     color: #FFFFFF !important;
     font-family: "Press Start 2P", "VT323", monospace;
-    border-bottom: 1px solid #FF3131;
+    border-bottom: 1px solid #CC3333;
 }
 
 .blocklyTreeLabel:hover,
 .blocks-category-label:hover {
-    background: #2C2C2C !important;
-    color: #FF3131 !important;
-    box-shadow: 0 0 8px #FF9900;
+    background: #333333 !important;
+    color: #CC3333 !important;
+    box-shadow: 0 0 8px #CC3333;
 }
 
 .blocklyTreeRow {
-    background: #2C2C2C !important;
-    border-bottom: 1px solid rgba(255, 51, 49, 0.25);
+    background: #1A1A1A !important;
+    border-bottom: 1px solid rgba(204, 51, 51, 0.25);
 }
 
 .blocklyTreeRow:hover {
-    background: #363636 !important;
+    background: #333333 !important;
 }

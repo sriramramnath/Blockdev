@@ -122,6 +122,7 @@ const GUIComponent = props => {
         onTelemetryModalCancel,
         onTelemetryModalOptIn,
         onTelemetryModalOptOut,
+        showMaximus,
         showComingSoon,
         soundsTabVisible,
         stageSizeMode,
@@ -167,11 +168,11 @@ const GUIComponent = props => {
             </StageWrapper>
         ) : (
             <Box
-                className={classNames(styles.pageWrapper, chatGPTStyles.withChatGPT)}
+                className={classNames(styles.pageWrapper, { [chatGPTStyles.withChatGPT]: showMaximus })}
                 dir={isRtl ? 'rtl' : 'ltr'}
                 {...componentProps}
             >
-                <ChatGPTMock visible={true} />
+                <ChatGPTMock visible={showMaximus} />
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         isRtl={isRtl}
@@ -442,6 +443,7 @@ GUIComponent.propTypes = {
     onTelemetryModalOptOut: PropTypes.func,
     onToggleLoginOpen: PropTypes.func,
     renderLogin: PropTypes.func,
+    showMaximus: PropTypes.bool,
     showComingSoon: PropTypes.bool,
     soundsTabVisible: PropTypes.bool,
     stageSizeMode: PropTypes.oneOf(Object.keys(STAGE_SIZE_MODES)),
@@ -467,6 +469,7 @@ GUIComponent.defaultProps = {
     canShare: false,
     canUseCloud: false,
     enableCommunity: false,
+    showMaximus: false,
     isCreating: false,
     isShared: false,
     isTotallyNormal: false,

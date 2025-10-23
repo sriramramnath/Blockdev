@@ -1,14 +1,14 @@
 /* Dark Theme Overrides */
 :root {
-    --workspace-bg: #121212;
+    --workspace-bg: #000000;
     --block-area-bg: #1A1A1A;
     --panel-bg: #2A2A2A;
     --toolbar-bg: #333333;
     --text-primary: #FFFFFF;
     --text-secondary: rgba(255, 255, 255, 0.7);
-    --border-primary: #D32F2F;
-    --accent-primary: #D32F2F;
-    --accent-secondary: #F57C00;
+    --border-primary: #CC3333;
+    --accent-primary: #CC3333;
+    --accent-secondary: #B32D2D;
 }
 
 /* Workspace and blocks area */

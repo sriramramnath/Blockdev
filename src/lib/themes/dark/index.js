@@ -67,13 +67,13 @@ const blockColors = {
     },
     text: 'rgba(255, 255, 255, .7)',
     textFieldText: '#E5E5E5',
-    workspace: '#121212',
-    toolboxSelected: '#4C4C4C',
+    workspace: '#000000',
+    toolboxSelected: '#333333',
     toolboxText: '#E5E5E5',
-    toolbox: '#121212',
-    flyout: '#121212',
-    textField: '#4C4C4C',
-    menuHover: 'rgba(255, 255, 255, 0.3)'
+    toolbox: '#000000',
+    flyout: '#000000',
+    textField: '#000000',
+    menuHover: 'rgba(204, 51, 51, 0.3)'
 };
 
 const extensions = {};

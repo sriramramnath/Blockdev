@@ -1,13 +1,19 @@
-$ui-primary: hsla(0, 0%, 7%, 1); /* #121212 - Darkest background */
-$ui-secondary: hsla(0, 0%, 12%, 1); /* #1E1E1E - Secondary background */
-$ui-tertiary: hsla(0, 0%, 17%, 1); /* #2C2C2C - Component background */
+$ui-primary: hsla(0, 0%, 0%, 1); /* #000000 - Primary black background for dark mode */
+$ui-secondary: hsla(0, 0%, 10%, 1); /* #1A1A1A - Secondary black background */
+$ui-tertiary: hsla(0, 0%, 20%, 1); /* #333333 - Tertiary black background */
 
 $ui-modal-overlay: hsla(0, 0%, 7%, 0.95); /* 95% transparent version of ui-primary */
 
-$ui-white: hsla(0, 100%, 100%, 1); /* #FFFFFF - Primary text */
-$ui-white-dim: hsla(0, 0%, 80%, 1); /* #CCCCCC - Secondary text */
+$ui-white: hsla(0, 0%, 0%, 1); /* #000000 - Primary black text for dark mode */
+$ui-white-dim: hsla(0, 0%, 20%, 1); /* #333333 - Secondary black text with better contrast */
 $ui-white-transparent: hsla(0, 0%, 0%, 0.25); /* 25% transparent version of ui-white */
-$ui-transparent: hsla(0, 100%, 100%, 0.95); /* Fully transparent */
+$ui-transparent: hsla(0, 0%, 0%, 0.95); /* Fully transparent */
+
+/* Red-themed accent colors */
+$accent-primary: hsla(0, 70%, 50%, 1); /* #CC3333 - Primary red accent */
+$accent-secondary: hsla(0, 60%, 40%, 1); /* #B32D2D - Darker red accent */
+$accent-success: hsla(120, 40%, 45%, 1); /* #6B8E23 - Olive green */
+$accent-warning: hsla(45, 80%, 55%, 1); /* #DAA520 - Golden brown */
 
 $ui-black-transparent: hsla(0, 0%, 0%, 0.95); /* 15% transparent version of black */
 $ui-black-transparent-10: hsla(0, 0%, 0%, 0.95); /* 10% transparent version of black */
@@ -15,38 +21,38 @@ $ui-black-transparent-10: hsla(0, 0%, 0%, 0.95); /* 10% transparent version of b
 $ui-green: hsla(163, 85%, 35%, 1); /* #0DA57A */
 $ui-green-2: hsla(163, 85%, 40%, 1); /* #0FBD8C */
 
-$text-primary: hsla(225, 15%, 40%, 1); /* #575E75 */
-$text-primary-transparent: hsla(225, 15%, 40%, 0.75);
+$text-primary: hsla(0, 0%, 100%, 1); /* #FFFFFF - White text for dark mode */
+$text-primary-transparent: hsla(0, 0%, 100%, 0.75);
 
-$motion-primary: hsla(355, 44%, 27%); /* #D32F2F - Primary Red */
-$motion-tertiary: hsla(355, 44%, 27%); /* #F57C00 - Hover/Active Orange */
+$motion-primary: hsla(0, 70%, 50%, 1); /* #CC3333 - Primary red */
+$motion-tertiary: hsla(0, 60%, 40%, 1); /* #B32D2D - Darker red */
 
-$looks-secondary: hsla(355, 44%, 27%); /* #D32F2F - Red */
-$looks-transparent: hsla(0, 78%, 50%, 0.35); /* 35% transparent red */
-$looks-light-transparent: hsla(0, 78%, 50%, 0.15); /* 15% transparent red */
-$looks-secondary-dark: hsla(0, 78%, 40%, 1); /* Darker red */
+$looks-secondary: hsla(0, 70%, 50%, 1); /* #CC3333 - Primary red */
+$looks-transparent: hsla(0, 70%, 50%, 0.35); /* 35% transparent red */
+$looks-light-transparent: hsla(0, 70%, 50%, 0.15); /* 15% transparent red */
+$looks-secondary-dark: hsla(0, 60%, 40%, 1); /* Darker red */
 
-$red-primary: hsla(355, 44%, 27%); /* #D32F2F - Primary Red */
-$red-tertiary: hsla(355, 44%, 27%); /* #F57C00 - Orange */
+$red-primary: hsla(0, 70%, 50%, 1); /* #CC3333 - Primary red */
+$red-tertiary: hsla(0, 60%, 40%, 1); /* #B32D2D - Darker red */
 
-$sound-primary: hsla(355, 44%, 27%); /* #D32F2F - Red */
-$sound-tertiary: hsla(355, 44%, 27%); /* #F57C00 - Orange */
+$sound-primary: hsla(0, 70%, 50%, 1); /* #CC3333 - Primary red */
+$sound-tertiary: hsla(0, 60%, 40%, 1); /* #B32D2D - Darker red */
 
-$control-primary: hsla(355, 44%, 27%); /* #D32F2F - Red */
+$control-primary: hsla(0, 70%, 50%, 1); /* #CC3333 - Primary red */
 
-$data-primary: hsla(355, 44%, 27%); /* #D32F2F - Red */
+$data-primary: hsla(0, 70%, 50%, 1); /* #CC3333 - Primary red */
 
-$pen-primary: hsla(355, 44%, 27%); /* #D32F2F - Red */
-$pen-transparent: hsla(0, 78%, 50%, 0.25); /* 25% transparent red */
-$pen-tertiary: hsla(355, 44%, 27%); /* #F57C00 - Orange */
+$pen-primary: hsla(0, 70%, 50%, 1); /* #CC3333 - Primary red */
+$pen-transparent: hsla(0, 70%, 50%, 0.25); /* 25% transparent red */
+$pen-tertiary: hsla(0, 60%, 40%, 1); /* #B32D2D - Darker red */
 
 $error-primary: hsla(14, 77%, 46%, 1); /* #D84315 - Error red */
 $error-light: hsla(14, 77%, 56%, 1); /* Lighter error red */
 $error-transparent: hsla(14, 77%, 46%, 0.25); /* 25% transparent error red */
 
-$extensions-primary: hsla(355, 44%, 27%); /* #D32F2F - Red */
-$extensions-tertiary: hsla(355, 44%, 27%); /* #F57C00 - Orange */
-$extensions-transparent: hsla(0, 78%, 50%, 0.35); /* 35% transparent red */
-$extensions-light: hsla(0, 78%, 60%, 1); /* Lighter red */
+$extensions-primary: hsla(0, 70%, 50%, 1); /* #CC3333 - Primary red */
+$extensions-tertiary: hsla(0, 60%, 40%, 1); /* #B32D2D - Darker red */
+$extensions-transparent: hsla(0, 70%, 50%, 0.35); /* 35% transparent red */
+$extensions-light: hsla(0, 70%, 60%, 1); /* Lighter red */
 
-$drop-highlight: hsla(355, 44%, 27%); /* #F57C00 - Orange */
+$drop-highlight: hsla(0, 70%, 50%, 1); /* #CC3333 - Primary red */

@@ -36,6 +36,7 @@ class Player extends React.Component {
                 <WrappedGui
                     isPlayerOnly
                     isFullScreen={false}
+                    showMaximus={false}
                 />
                 <iframe
                     allowFullScreen
