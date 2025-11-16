@@ -4,11 +4,32 @@
 
 .page-wrapper {
     height: 100%;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .body-wrapper {
     height: calc(100% - $menu-bar-height);
-    background-color: $ui-primary;
+    background: linear-gradient(135deg,
+        rgba(10, 10, 10, 1) 0%,
+        rgba(18, 18, 18, 1) 50%,
+        rgba(12, 12, 12, 1) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Modern background pattern */
+.body-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(211, 47, 47, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(211, 47, 47, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 .body-wrapper * {
@@ -75,13 +96,16 @@
     margin-bottom: 0;
 
     border-radius: 1rem 1rem 0 0;
-    border: 1px solid $ui-black-transparent;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 
     padding: 0.125rem 1.25rem 0;
     font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
 
-    background-color: $ui-tertiary;
-    color: $text-primary-transparent;
+    background: rgba(44, 44, 44, 0.6);
+    backdrop-filter: blur(10px);
+    color: rgba(224, 224, 224, 0.7);
 
     display: flex;
     justify-content: center;
@@ -89,6 +113,29 @@
 
     user-select: none;
     white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle shine effect */
+.tab::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.05) 50%,
+        transparent 100%);
+    transition: left 0.5s ease;
+}
+
+.tab:hover::after {
+    left: 100%;
 }
 
 [dir="ltr"] .tab {
@@ -119,14 +166,39 @@
 }
 
 .tab:hover {
-  background-color: $ui-primary;
+    background: rgba(44, 44, 44, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .tab.is-selected {
     height: 90%;
-    color: $looks-secondary;
-    background-color: $ui-white;
+    color: #FFFFFF;
+    background: linear-gradient(135deg,
+        rgba(18, 18, 18, 1) 0%,
+        rgba(24, 24, 24, 1) 100%);
+    backdrop-filter: blur(20px);
+    border-color: rgba(211, 47, 47, 0.3);
+    border-bottom-color: transparent;
+    box-shadow: 0 -2px 20px rgba(211, 47, 47, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
     z-index: 4; /* Make sure selected is always above */
+    transform: none;
+}
+
+.tab.is-selected::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(211, 47, 47, 0.8) 50%,
+        transparent 100%);
+    border-radius: 2px;
 }
 
 .tab img {
@@ -236,20 +308,34 @@
     left: 0;
     right: 0;
     z-index: $z-index-extension-button;
-    background: $looks-secondary;
-
-    border: 1px solid $looks-secondary;
-    box-sizing: content-box; /* To match scratch-block vertical toolbox borders */
+    background: linear-gradient(180deg,
+        rgba(211, 47, 47, 0.95) 0%,
+        rgba(211, 47, 47, 1) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(211, 47, 47, 0.3);
+    border-bottom: none;
+    box-sizing: content-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-$fade-out-distance: 15px;
+.extension-button-container:hover {
+    background: linear-gradient(180deg,
+        rgba(211, 47, 47, 1) 0%,
+        rgba(198, 40, 40, 1) 100%);
+    box-shadow: 0 -4px 20px rgba(211, 47, 47, 0.3);
+}
+
+$fade-out-distance: 20px;
 
 .extension-button-container:before {
     content: "";
     position: absolute;
     top: calc(calc(-1 * $fade-out-distance) - 1px);
     left: -1px;
-    background: linear-gradient(rgba(0, 0, 0, 0),rgba(0, 0, 0, 0.15));
+    background: linear-gradient(to bottom,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.2) 50%,
+        rgba(0, 0, 0, 0.3) 100%);
     height: $fade-out-distance;
     width: calc(100% + 0.5px);
 }
@@ -262,6 +348,15 @@ $fade-out-distance: 15px;
     width: 100%;
     height: 100%;
     cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.extension-button:hover {
+    transform: scale(1.05);
+}
+
+.extension-button:active {
+    transform: scale(0.95);
 }
 
 .extension-button-icon {

@@ -1,6 +1,7 @@
 @import "../../css/units.css";
 @import "../../css/colors.css";
 @import "../../css/z-index.css";
+@import "../../css/blocks-text-fix.css";
 
 .blocks {
     height: 100%;
@@ -24,9 +25,11 @@
     right: 0;
     bottom: 0;
     left: 0;
-    border: 1px solid $ui-black-transparent;
-    border-top-right-radius: $space;
-    border-bottom-right-radius: $space;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
 }
 
 [dir="rtl"] .blocks :global(.injectionDiv) {
@@ -41,10 +44,11 @@
 }
 
 .blocks :global(.blocklyToolboxDiv) {
-    border-right: 1px solid $ui-black-transparent;
-    border-bottom: 1px solid $ui-black-transparent;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     box-sizing: content-box;
     height: calc(100% - 3.25rem) !important;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
 
     /*
         For now, the layout cannot support scrollbars in the category menu.
