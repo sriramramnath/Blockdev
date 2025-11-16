@@ -1,9 +1,9 @@
 /**
- * AI Block Generator for Scratch-like Editor
+ * AI Block Generator for Codyssey Editor
  * Parses natural language requests and generates appropriate block objects for the palette
  */
 
-// Block categories and their colors (matching Scratch's color scheme)
+// Block categories and their colors (matching Codyssey's color scheme)
 const BLOCK_CATEGORIES = {
     motion: {
         id: 'motion',
@@ -73,7 +73,7 @@ function generateBlockId() {
 }
 
 /**
- * Creates a block JSON definition for Scratch-blocks
+ * Creates a block JSON definition for Codyssey blocks
  */
 function createBlockJSON(blockInfo) {
     const category = BLOCK_CATEGORIES[blockInfo.category] || BLOCK_CATEGORIES.control;
@@ -572,7 +572,7 @@ function handleAISuggestion(text) {
 
 /**
  * Function to add a block to the palette (to be implemented in the main application)
- * This would need to interface with the actual Scratch-blocks system
+ * This would need to interface with the actual Codyssey blocks system
  * @param {Object} block - Block object to add to the palette
  */
 function addBlockToPalette(block) {

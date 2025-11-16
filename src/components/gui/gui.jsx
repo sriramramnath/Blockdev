@@ -36,11 +36,12 @@ import {resolveStageSize} from '../../lib/screen-utils';
 import {themeMap} from '../../lib/themes';
 
 import styles from './gui.css';
-import chatGPTStyles from './gui-chatgpt.css';
+import minimalTheme from './gui-minimal-theme.css';
 import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
+import aiIcon from './icon--ai.svg';
 import ChatGPTMock from '../chatgpt-mock/chatgpt-mock.jsx';
 import DebugModal from '../debug-modal/debug-modal.jsx';
 
@@ -166,11 +167,10 @@ const GUIComponent = props => {
             </StageWrapper>
         ) : (
             <Box
-                className={classNames(styles.pageWrapper, chatGPTStyles.withChatGPT)}
+                className={styles.pageWrapper}
                 dir={isRtl ? 'rtl' : 'ltr'}
                 {...componentProps}
             >
-                <ChatGPTMock />
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         isRtl={isRtl}
@@ -313,6 +313,17 @@ const GUIComponent = props => {
                                             id="gui.gui.soundsTab"
                                         />
                                     </Tab>
+                                    <Tab className={tabClassNames.tab}>
+                                        <img
+                                            draggable={false}
+                                            src={aiIcon}
+                                        />
+                                        <FormattedMessage
+                                            defaultMessage="AI Assistant"
+                                            description="Button to get to the AI assistant panel"
+                                            id="gui.gui.aiTab"
+                                        />
+                                    </Tab>
                                 </TabList>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     <Box className={styles.blocksWrapper}>
@@ -351,6 +362,9 @@ const GUIComponent = props => {
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     {soundsTabVisible ? <SoundTab vm={vm} /> : null}
+                                </TabPanel>
+                                <TabPanel className={tabClassNames.tabPanel}>
+                                    <ChatGPTMock />
                                 </TabPanel>
                             </Tabs>
                             {backpackVisible ? (

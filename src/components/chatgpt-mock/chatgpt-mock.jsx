@@ -37,7 +37,26 @@ const ChatGPTMock = ({ visible = true, onClose, onBlocksGenerated }) => {
                     console.log("Initializing Gemini API with key:", API_KEY.substring(0, 5) + "...");
                     const genAI = new GoogleGenerativeAI(API_KEY);
                     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-                    const systemPrompt = "You are Maximus, A helpful and friendly assistant that helps users create Scratch blocks through natural language.";
+                    const systemPrompt = `You are Maximus, a helpful AI assistant for Codyssey (a visual programming platform).
+
+IMPORTANT: Format all responses using this EXACT structure:
+
+[DISPLAY]
+(Your friendly, conversational response to the user here)
+[/DISPLAY]
+
+[BLOCKS]
+(Only the block commands here, one per line, for example:)
+when flag clicked
+move 10 steps
+say [Hello!] for 2 seconds
+[/BLOCKS]
+
+RULES:
+1. The [DISPLAY] section is shown to the user - be conversational and helpful
+2. The [BLOCKS] section is parsed to create blocks - use exact block syntax
+3. ALWAYS include both sections, even if [BLOCKS] is empty
+4. Keep block commands simple and clear`;
                     const chatSession = model.startChat();
                     await chatSession.sendMessage(systemPrompt);
                     setChat(chatSession);
@@ -176,19 +195,10 @@ const ChatGPTMock = ({ visible = true, onClose, onBlocksGenerated }) => {
                 responseText = mockResponses[randomIndex];
                 await new Promise(resolve => setTimeout(resolve, 1000));
             } else {
-                // Enhanced prompt for real AI to generate programming plans
+                // Enhanced prompt for real AI with structured response format
                 const enhancedPrompt = `${input.trim()}
 
-Please create a step-by-step programming plan using Scratch blocks. Format your response with clear block commands like:
-
-- "when flag clicked" (to start the program)
-- "move X steps" (for movement)
-- "turn left X degrees" or "turn right X degrees" (for rotation)
-- "say [message] for X seconds" (for speech)
-- "wait X seconds" (for timing)
-- "repeat X" or "repeat forever" (for loops)
-
-Be specific with numbers and messages.`;
+Remember to format your response with [DISPLAY] and [BLOCKS] sections.`;
 
                 try {
                     const result = await chat.sendMessage(enhancedPrompt);
@@ -213,32 +223,35 @@ Be specific with numbers and messages.`;
                 }
             }
 
-            // Parse the AI response to extract blocks
-            const extractedBlocks = extractBlocksFromResponse(responseText);
+            // Parse structured response
+            const displayMatch = responseText.match(/\[DISPLAY\]([\s\S]*?)\[\/DISPLAY\]/);
+            const blocksMatch = responseText.match(/\[BLOCKS\]([\s\S]*?)\[\/BLOCKS\]/);
 
-            // Generate scratchblocks code from the response
-            const scratchblocksCode = convertToScratchblocks(responseText);
-            setGeneratedBlocks(scratchblocksCode);
+            const displayText = displayMatch ? displayMatch[1].trim() : responseText;
+            const blocksText = blocksMatch ? blocksMatch[1].trim() : '';
 
-            // Create functional blocks in the actual workspace
-            try {
-                const functionalBlocks = createBlocksDirectly(responseText);
+            console.log('Parsed display text:', displayText);
+            console.log('Parsed blocks text:', blocksText);
 
-                if (functionalBlocks.length > 0 || extractedBlocks.length > 0) {
-                    const totalBlocks = Math.max(functionalBlocks.length, extractedBlocks.length);
-                    const blockMessage = {
-                        role: 'assistant',
-                        content: `I've created ${totalBlocks + 1} blocks for you! Check your workspace.`
-                    };
-                    setMessages(prev => [...prev, blockMessage]);
+            // Create functional blocks from the [BLOCKS] section
+            if (blocksText) {
+                try {
+                    const functionalBlocks = createBlocksDirectly(blocksText);
+                    console.log(`Created ${functionalBlocks.length} blocks from structured response`);
+
+                    // Pass blocks to parent component if callback exists
+                    if (onBlocksGenerated && functionalBlocks.length > 0) {
+                        onBlocksGenerated(functionalBlocks);
+                    }
+                } catch (err) {
+                    console.error("Error creating blocks from structured response:", err);
                 }
-            } catch (err) {
-                console.error("Error creating blocks:", err);
             }
 
+            // Display only the user-friendly part
             const assistantMessage = {
                 role: 'assistant',
-                content: responseText
+                content: displayText
             };
             setMessages(prev => [...prev, assistantMessage]);
 

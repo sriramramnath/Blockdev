@@ -1,6 +1,6 @@
 /**
- * Simple and Direct Block Creator for Scratch Workspace
- * This approach directly creates blocks using the Scratch workspace API
+ * Simple and Direct Block Creator for Codyssey Workspace
+ * This approach directly creates blocks using the Codyssey workspace API
  */
 
 // Simple function to create blocks directly in the workspace

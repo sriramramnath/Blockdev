@@ -1,15 +1,15 @@
 {
-  "name": "scratch-gui",
+  "name": "codyssey-ai",
   "version": "5.1.90",
-  "description": "Graphical User Interface for creating and running Scratch 3.0 projects",
-  "author": "Massachusetts Institute of Technology",
+  "description": "Codyssey AI - Visual Programming with AI Assistant (Derived from Scratch GUI)",
+  "author": "Codyssey AI",
   "license": "AGPL-3.0-only",
-  "homepage": "https://github.com/scratchfoundation/scratch-gui#readme",
+  "homepage": "https://github.com/codyssey-ai/codyssey-ai#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scratchfoundation/scratch-gui.git"
+    "url": "https://github.com/codyssey-ai/codyssey-ai.git"
   },
-  "main": "./dist/scratch-gui.js",
+  "main": "./dist/codyssey-ai.js",
   "scripts": {
     "build": "npm run clean && webpack",
     "clean": "rimraf ./build ./dist",
