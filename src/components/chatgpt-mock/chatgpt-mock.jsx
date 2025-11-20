@@ -9,7 +9,7 @@ const ChatGPTMock = ({ visible = true, onClose, onBlocksGenerated }) => {
     const [messages, setMessages] = useState([
         {
             role: 'assistant',
-            content: 'Hey there! What question would you like to ask Maximus?'
+            content: 'Ask me to create blocks.'
         }
     ]);
     const [input, setInput] = useState('');
@@ -25,7 +25,7 @@ const ChatGPTMock = ({ visible = true, onClose, onBlocksGenerated }) => {
     useEffect(() => {
         const initializeGemini = async () => {
             if (visible && !isInitialized) {
-                const API_KEY = "AIzaSyD_gROd6T5w-pSi9aYl47sTEsWgr2dR6pY";
+                const API_KEY = "AIzaSyAkysoby9gcgbfYPIz-6AhdOEs9BHypp4c";
                 if (!API_KEY) {
                     console.warn("Missing Gemini API key. Using mock responses.");
                     setChat('mock');
@@ -37,26 +37,44 @@ const ChatGPTMock = ({ visible = true, onClose, onBlocksGenerated }) => {
                     console.log("Initializing Gemini API with key:", API_KEY.substring(0, 5) + "...");
                     const genAI = new GoogleGenerativeAI(API_KEY);
                     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-                    const systemPrompt = `You are Maximus, a helpful AI assistant for Codyssey (a visual programming platform).
+                    const systemPrompt = `You are a minimal AI assistant for Codyssey, a visual programming platform.
 
-IMPORTANT: Format all responses using this EXACT structure:
+CRITICAL RULES:
+1. Keep responses SHORT (1-2 sentences max in DISPLAY)
+2. NO themes, NO roleplay, NO verbose explanations
+3. Be direct and helpful
+4. ALWAYS use this exact format:
 
 [DISPLAY]
-(Your friendly, conversational response to the user here)
+Brief, helpful response here.
 [/DISPLAY]
 
 [BLOCKS]
-(Only the block commands here, one per line, for example:)
 when flag clicked
 move 10 steps
-say [Hello!] for 2 seconds
+turn left 90 degrees
 [/BLOCKS]
 
-RULES:
-1. The [DISPLAY] section is shown to the user - be conversational and helpful
-2. The [BLOCKS] section is parsed to create blocks - use exact block syntax
-3. ALWAYS include both sections, even if [BLOCKS] is empty
-4. Keep block commands simple and clear`;
+BLOCK SYNTAX:
+- when flag clicked
+- move [X] steps
+- turn left [X] degrees / turn right [X] degrees
+- say [message] for [X] seconds
+- wait [X] seconds
+- repeat [X] / repeat forever
+
+EXAMPLE:
+User: "move 10 steps and turn left"
+
+[DISPLAY]
+I'll create blocks to move forward 10 steps and turn left 90 degrees.
+[/DISPLAY]
+
+[BLOCKS]
+when flag clicked
+move 10 steps
+turn left 90 degrees
+[/BLOCKS]`;
                     const chatSession = model.startChat();
                     await chatSession.sendMessage(systemPrompt);
                     setChat(chatSession);
@@ -273,7 +291,7 @@ Remember to format your response with [DISPLAY] and [BLOCKS] sections.`;
         <div className={styles.chatgptContainer}>
             <div className={styles.header}>
                 <span className={styles.headerDecor}></span>
-                MAXIMUS AI
+                AI Assistant
                 <span className={styles.headerDecor}></span>
                 {onClose && (
                     <button className={styles.closeButton} onClick={onClose}>
@@ -313,7 +331,7 @@ Remember to format your response with [DISPLAY] and [BLOCKS] sections.`;
                 <input
                     type="text"
                     className={styles.input}
-                    placeholder="Ask Maximus to create blocks for you..."
+                    placeholder="Describe blocks to create..."
                     value={input}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
