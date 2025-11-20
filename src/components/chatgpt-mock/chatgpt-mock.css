@@ -2,7 +2,7 @@
     width: 100%;
     height: 100%;
     max-height: 100%;
-    background: #1E1E1E;
+    background: #181818;
     display: flex;
     flex-direction: column;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -15,11 +15,11 @@
     padding: 0.75rem 1rem;
     font-size: 0.8125rem;
     font-weight: 400;
-    background: #1E1E1E;
+    background: #181818;
     text-align: left;
-    color: #A0A0A0;
+    color: #737373;
     letter-spacing: 0;
-    border-bottom: 1px solid #2A2A2A;
+    border-bottom: 1px solid #292929;
 }
 
 .messagesContainer {
@@ -27,28 +27,28 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: 1rem;
-    background: #1E1E1E;
+    background: #181818;
     scrollbar-width: thin;
-    scrollbar-color: #333333 #1E1E1E;
+    scrollbar-color: #737373 #181818;
     min-height: 0;
     max-height: 100%;
 }
 
 .messagesContainer::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
 }
 
 .messagesContainer::-webkit-scrollbar-track {
-    background: #1E1E1E;
+    background: #181818;
 }
 
 .messagesContainer::-webkit-scrollbar-thumb {
-    background: #333333;
+    background: #737373;
     border-radius: 0;
 }
 
 .messagesContainer::-webkit-scrollbar-thumb:hover {
-    background: #444444;
+    background: #D6D6DD;
 }
 
 .message {
@@ -63,9 +63,9 @@
     margin-left: 0;
     margin-right: auto;
     border: none;
-    border-left: 2px solid #333333;
+    border-left: 2px solid #292929;
     padding-left: 1rem;
-    color: #D0D0D0;
+    color: #D6D6DD;
     font-size: 0.875rem;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     line-height: 1.5;
@@ -74,17 +74,15 @@
 }
 
 .user {
-    background: transparent;
-    padding: 0.75rem 0;
+    background: #292929;
+    padding: 0.75rem 1rem;
     border-radius: 0;
     max-width: 100%;
     margin-left: auto;
     margin-right: 0;
     border: none;
-    border-right: 2px solid #444444;
-    padding-right: 1rem;
-    text-align: right;
-    color: #FFFFFF;
+    text-align: left;
+    color: #D6D6DD;
     font-size: 0.875rem;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     line-height: 1.5;
@@ -95,21 +93,21 @@
 .inputArea {
     flex-shrink: 0;
     padding: 0.75rem 1rem;
-    border-top: 1px solid #2A2A2A;
+    border-top: 1px solid #292929;
     display: flex;
     gap: 0.5rem;
-    background: #1E1E1E;
+    background: #181818;
     align-items: center;
 }
 
 .input {
     flex: 1;
     padding: 0.5rem 0.75rem;
-    border: 1px solid #333333;
-    border-radius: 2px;
+    border: 1px solid #292929;
+    border-radius: 0;
     font-size: 0.875rem;
     background: transparent;
-    color: #FFFFFF;
+    color: #D6D6DD;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     transition: border-color 0.15s ease;
     resize: none;
@@ -120,21 +118,21 @@
 
 .input:focus {
     outline: none;
-    border-color: #555555;
-    box-shadow: none;
-    background: transparent;
+    border-color: #163761;
+    box-shadow: 0 0 0 1px #163761;
+    background: #292929;
 }
 
 .input::placeholder {
-    color: #555555;
+    color: #737373;
 }
 
 .sendButton {
     padding: 0.5rem 0.75rem;
     background: transparent;
-    color: #FFFFFF;
-    border: 1px solid #333333;
-    border-radius: 2px;
+    color: #D6D6DD;
+    border: 1px solid #292929;
+    border-radius: 0;
     cursor: pointer;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-weight: 400;
@@ -148,33 +146,33 @@
 }
 
 .sendButton:hover {
-    background: #2A2A2A;
-    border-color: #444444;
+    background: #163761;
+    border-color: #163761;
 }
 
 .sendButton:active {
     transform: none;
-    background: #333333;
+    background: #292929;
 }
 
 .input:disabled {
     background: transparent;
     cursor: not-allowed;
     opacity: 0.4;
-    border-color: #2A2A2A;
+    border-color: #292929;
 }
 
 .sendButton:disabled {
     cursor: not-allowed;
     opacity: 0.4;
     background: transparent;
-    border-color: #2A2A2A;
+    border-color: #292929;
 }
 
 .sendButton:disabled:hover {
     transform: none;
     background: transparent;
-    border-color: #2A2A2A;
+    border-color: #292929;
 }
 
 .loadingDots {
@@ -187,7 +185,7 @@
     width: 3px;
     height: 3px;
     border-radius: 0;
-    background: #555555;
+    background: #737373;
     animation: bounce 1.4s infinite ease-in-out both;
 }
 
@@ -220,7 +218,7 @@
     top: 0.75rem;
     background: transparent;
     border: none;
-    color: #555555;
+    color: #737373;
     font-size: 1rem;
     cursor: pointer;
     padding: 0;
@@ -235,5 +233,5 @@
 
 .closeButton:hover {
     background: transparent;
-    color: #AAAAAA;
+    color: #D6D6DD;
 }
