@@ -1,170 +1,170 @@
 /**
- * Block Text Visibility Fix + Modern Styling
- * Ensures block text is always visible and applies modern design patterns
+ * Block Text Visibility Fix - Cursor Color Scheme Only
+ * Colors: #181818, #D6D6DD, #163761, #292929, #737373
  */
 
 /* ========================================
    BLOCK TEXT VISIBILITY FIX
    ======================================== */
 
-/* Force block text to be black and visible */
+/* Block text - using Cursor text color */
 :global(.blocklyText),
 :global(.blocklyEditableText),
 :global(.blocklyNonEditableText),
 :global(.blocklyDropdownText) {
-    fill: #000000 !important;
-    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
-    font-weight: 600 !important;
+    fill: #D6D6DD !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif !important;
+    font-weight: 500 !important;
     font-size: 12pt !important;
 }
 
 /* Input fields in blocks */
 :global(.blocklyEditableText) > :global(tspan),
 :global(.blocklyText) > :global(tspan) {
-    fill: #000000 !important;
+    fill: #D6D6DD !important;
 }
 
 /* Dropdown text */
 :global(.blocklyDropDownDiv) {
-    background-color: rgba(30, 30, 30, 0.98) !important;
-    border-radius: 12px !important;
-    backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
+    background-color: #292929 !important;
+    border-radius: 0 !important;
+    backdrop-filter: none !important;
+    border: 1px solid #737373 !important;
+    box-shadow: none !important;
 }
 
 :global(.blocklyDropDownDiv) :global(.blocklyMenuItem) {
-    color: #E0E0E0 !important;
-    padding: 10px 16px !important;
-    border-radius: 8px !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    color: #D6D6DD !important;
+    padding: 8px 12px !important;
+    border-radius: 0 !important;
+    transition: all 0.1s ease !important;
 }
 
 :global(.blocklyDropDownDiv) :global(.blocklyMenuItem:hover) {
-    background-color: rgba(211, 47, 47, 0.15) !important;
-    color: #FFFFFF !important;
+    background-color: #163761 !important;
+    color: #D6D6DD !important;
 }
 
 :global(.blocklyDropDownDiv) :global(.blocklyMenuItemSelected) {
-    background-color: rgba(211, 47, 47, 0.25) !important;
-    color: #FFFFFF !important;
+    background-color: #163761 !important;
+    color: #D6D6DD !important;
 }
 
 /* Field inputs */
 :global(.blocklyHtmlInput) {
-    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
-    font-weight: 600 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif !important;
+    font-weight: 500 !important;
     font-size: 12pt !important;
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    color: #000000 !important;
-    border: 1px solid rgba(0, 0, 0, 0.2) !important;
-    border-radius: 6px !important;
+    background-color: #292929 !important;
+    color: #D6D6DD !important;
+    border: 1px solid #737373 !important;
+    border-radius: 0 !important;
     padding: 6px 10px !important;
 }
 
 :global(.blocklyHtmlInput):focus {
     outline: none !important;
-    border-color: rgba(211, 47, 47, 0.6) !important;
-    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.2) !important;
+    border-color: #163761 !important;
+    box-shadow: 0 0 0 1px #163761 !important;
 }
 
 /* ========================================
-   MODERN BLOCK STYLING
+   MINIMAL BLOCK STYLING
    ======================================== */
 
-/* Add subtle shadows to blocks */
+/* Remove shadows from blocks */
 :global(.blocklyDraggable) {
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3)) !important;
-    transition: filter 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    filter: none !important;
+    transition: none !important;
 }
 
 :global(.blocklyDraggable:hover) {
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4)) !important;
+    filter: none !important;
 }
 
-/* Smooth block animations */
+/* No block animations */
 :global(.blocklyBlockCanvas) :global(.blocklyDraggable) {
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: none !important;
 }
 
-/* Better comment styling */
+/* Comment styling */
 :global(.scratchCommentText) {
-    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif !important;
     font-size: 11pt !important;
-    fill: #E0E0E0 !important;
+    fill: #D6D6DD !important;
 }
 
 /* ========================================
-   WORKSPACE MODERNIZATION
+   WORKSPACE CURSOR COLORS
    ======================================== */
 
 :global(.blocklyMainBackground) {
-    fill: #0A0A0A !important;
+    fill: #181818 !important;
 }
 
 :global(.blocklyFlyoutBackground) {
-    fill: rgba(18, 18, 18, 0.98) !important;
+    fill: #181818 !important;
     fill-opacity: 1 !important;
 }
 
 :global(.blocklyScrollbarBackground) {
-    fill: rgba(255, 255, 255, 0.05) !important;
+    fill: #181818 !important;
     fill-opacity: 1 !important;
 }
 
 :global(.blocklyScrollbarHandle) {
-    fill: rgba(211, 47, 47, 0.4) !important;
+    fill: #737373 !important;
     fill-opacity: 1 !important;
 }
 
 :global(.blocklyScrollbarHandle):hover {
-    fill: rgba(211, 47, 47, 0.6) !important;
+    fill: #D6D6DD !important;
 }
 
 /* Grid dots */
 :global(.blocklyGridDots) {
-    fill: rgba(255, 255, 255, 0.03) !important;
+    fill: #292929 !important;
 }
 
 /* Category labels */
 :global(.scratchCategoryMenuItemLabel) {
-    fill: #E0E0E0 !important;
-    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
-    font-weight: 600 !important;
+    fill: #D6D6DD !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif !important;
+    font-weight: 500 !important;
 }
 
 :global(.scratchCategoryMenuItem):hover :global(.scratchCategoryMenuItemLabel) {
-    fill: #FFFFFF !important;
+    fill: #D6D6DD !important;
 }
 
 :global(.categoryBubble) {
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3)) !important;
+    filter: none !important;
 }
 
 /* ========================================
-   CONTEXT MENU MODERNIZATION
+   CONTEXT MENU CURSOR COLORS
    ======================================== */
 
 :global(.blocklyContextMenu) {
-    background-color: rgba(30, 30, 30, 0.98) !important;
-    border-radius: 12px !important;
-    backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
-    padding: 6px !important;
+    background-color: #292929 !important;
+    border-radius: 0 !important;
+    backdrop-filter: none !important;
+    border: 1px solid #737373 !important;
+    box-shadow: none !important;
+    padding: 4px !important;
 }
 
 :global(.blocklyMenuItem) {
-    color: #E0E0E0 !important;
-    padding: 10px 16px !important;
-    border-radius: 8px !important;
-    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    color: #D6D6DD !important;
+    padding: 8px 12px !important;
+    border-radius: 0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif !important;
+    transition: all 0.1s ease !important;
 }
 
 :global(.blocklyMenuItem:hover) {
-    background-color: rgba(211, 47, 47, 0.15) !important;
-    color: #FFFFFF !important;
+    background-color: #163761 !important;
+    color: #D6D6DD !important;
 }
 
 :global(.blocklyMenuItemDisabled) {
@@ -172,47 +172,45 @@
 }
 
 /* ========================================
-   TOOLBOX MODERNIZATION
+   TOOLBOX CURSOR COLORS
    ======================================== */
 
 :global(.blocklyToolboxDiv) {
-    background: linear-gradient(180deg,
-        rgba(18, 18, 18, 1) 0%,
-        rgba(12, 12, 12, 1) 100%) !important;
-    backdrop-filter: blur(20px) !important;
+    background: #181818 !important;
+    backdrop-filter: none !important;
 }
 
 :global(.scratchCategoryMenu) {
-    padding: 12px 0 !important;
+    padding: 8px 0 !important;
 }
 
 :global(.scratchCategoryMenuItem) {
-    margin: 4px 8px !important;
-    border-radius: 10px !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    margin: 2px 6px !important;
+    border-radius: 0 !important;
+    transition: all 0.1s ease !important;
 }
 
 :global(.scratchCategoryMenuItem):hover {
-    transform: translateX(4px) !important;
-    background-color: rgba(255, 255, 255, 0.05) !important;
+    transform: none !important;
+    background-color: #292929 !important;
 }
 
 :global(.scratchCategoryMenuItemSelected) {
-    background-color: rgba(211, 47, 47, 0.15) !important;
-    border-left: 3px solid #D32F2F !important;
+    background-color: #163761 !important;
+    border-left: 2px solid #163761 !important;
 }
 
 /* ========================================
-   ZOOM CONTROLS MODERNIZATION
+   ZOOM CONTROLS
    ======================================== */
 
 :global(.blocklyZoom) {
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) !important;
+    filter: none !important;
 }
 
 :global(.blocklyZoom) :global(image) {
     opacity: 0.7 !important;
-    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: opacity 0.1s ease !important;
 }
 
 :global(.blocklyZoom) :global(image):hover {
@@ -220,40 +218,42 @@
 }
 
 /* ========================================
-   TRASH CAN MODERNIZATION
+   TRASH CAN
    ======================================== */
 
 :global(.blocklyTrash) {
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    filter: none !important;
+    transition: none !important;
 }
 
 :global(.blocklyTrash):hover {
-    transform: scale(1.1) !important;
-    filter: drop-shadow(0 6px 16px rgba(211, 47, 47, 0.4)) !important;
+    transform: none !important;
+    filter: none !important;
 }
 
 /* ========================================
-   SELECTION GLOW
+   SELECTION - CURSOR HIGHLIGHT COLOR
    ======================================== */
 
 :global(.blocklySelected) > :global(path),
 :global(.blocklySelected) > :global(rect) {
-    filter: drop-shadow(0 0 8px rgba(211, 47, 47, 0.6)) !important;
+    stroke: #163761 !important;
+    stroke-width: 2px !important;
+    filter: none !important;
 }
 
 /* ========================================
-   SMOOTH ANIMATIONS
+   NO ANIMATIONS
    ======================================== */
 
 :global(.blocklyDraggable) {
-    will-change: transform !important;
+    will-change: auto !important;
 }
 
 :global(.blocklyFlyout) :global(.blocklyDraggable) {
-    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: none !important;
 }
 
 :global(.blocklyFlyout) :global(.blocklyDraggable):hover {
-    opacity: 0.9 !important;
+    opacity: 1 !important;
 }
