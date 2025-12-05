@@ -359,6 +359,7 @@ const createBlocksDirectly = (aiResponse) => {
         // Parse natural language loops FIRST (e.g., "move 10 steps forever" or "move 10 steps, turn left 15 degrees forever")
         // Strip any intro text and match the actual command
         const cleanedResponse = lowerResponse.replace(/^.*?(?=move|turn|wait|say|show|hide|pen)/i, '').trim();
+        const cleanedStartIndex = lowerResponse.toLowerCase().indexOf(cleanedResponse.toLowerCase());
         const foreverPattern = /^(.+?)\s+forever\s*$/i;
         const naturalForeverMatch = cleanedResponse.match(foreverPattern);
 
@@ -366,6 +367,16 @@ const createBlocksDirectly = (aiResponse) => {
             console.log('✓ Matched natural forever loop:', naturalForeverMatch[0]);
             console.log('✓ Nested commands:', naturalForeverMatch[1]);
             console.log('✓ Creating forever block with natural language syntax');
+            
+            // Mark the entire loop content as processed to prevent duplicate parsing
+            if (cleanedStartIndex !== -1 && naturalForeverMatch.index !== undefined) {
+                const matchIndex = cleanedStartIndex + naturalForeverMatch.index;
+                processedRanges.push({
+                    start: matchIndex,
+                    end: matchIndex + naturalForeverMatch[0].length
+                });
+            }
+            
             const foreverBlock = workspace.newBlock('control_forever');
             foreverBlock.initSvg();
             foreverBlock.render();
@@ -446,6 +457,16 @@ const createBlocksDirectly = (aiResponse) => {
             console.log('✓ Matched natural repeat loop:', naturalRepeatMatch[0]);
             console.log('✓ Nested commands:', naturalRepeatMatch[1]);
             console.log('✓ Creating repeat block with natural language syntax');
+            
+            // Mark the entire loop content as processed to prevent duplicate parsing
+            if (cleanedStartIndex !== -1 && naturalRepeatMatch.index !== undefined) {
+                const matchIndex = cleanedStartIndex + naturalRepeatMatch.index;
+                processedRanges.push({
+                    start: matchIndex,
+                    end: matchIndex + naturalRepeatMatch[0].length
+                });
+            }
+            
             const times = naturalRepeatMatch[2];
             console.log(`Creating repeat block for ${times} times with natural language syntax`);
             const repeatBlock = workspace.newBlock('control_repeat');
@@ -531,6 +552,10 @@ const createBlocksDirectly = (aiResponse) => {
         // Move commands
         const moveMatches = [...lowerResponse.matchAll(/move.*?(\d+).*?steps?/g)];
         moveMatches.forEach(match => {
+            // Skip if this match was already processed as part of a loop
+            if (isProcessed(match)) {
+                return;
+            }
             const steps = match[1];
             console.log(`Creating move block with ${steps} steps`);
             
@@ -566,6 +591,10 @@ const createBlocksDirectly = (aiResponse) => {
         // Turn right commands
         const turnRightMatches = [...lowerResponse.matchAll(/turn.*?right.*?(\d+).*?degrees?/g)];
         turnRightMatches.forEach(match => {
+            // Skip if this match was already processed as part of a loop
+            if (isProcessed(match)) {
+                return;
+            }
             const degrees = match[1];
             console.log(`Creating turn right block with ${degrees} degrees`);
             
@@ -599,6 +628,10 @@ const createBlocksDirectly = (aiResponse) => {
         // Turn left commands
         const turnLeftMatches = [...lowerResponse.matchAll(/turn.*?left.*?(\d+).*?degrees?/g)];
         turnLeftMatches.forEach(match => {
+            // Skip if this match was already processed as part of a loop
+            if (isProcessed(match)) {
+                return;
+            }
             const degrees = match[1];
             console.log(`Creating turn left block with ${degrees} degrees`);
             
@@ -630,6 +663,10 @@ const createBlocksDirectly = (aiResponse) => {
         // Wait commands
         const waitMatches = [...lowerResponse.matchAll(/wait.*?(\d+(?:\.\d+)?).*?seconds?/g)];
         waitMatches.forEach(match => {
+            // Skip if this match was already processed as part of a loop
+            if (isProcessed(match)) {
+                return;
+            }
             const seconds = match[1];
             console.log(`Creating wait block with ${seconds} seconds`);
             
@@ -661,6 +698,10 @@ const createBlocksDirectly = (aiResponse) => {
         // Say commands
         const sayMatches = [...lowerResponse.matchAll(/say.*?['""]([^'""]*)['""](?:.*?for.*?(\d+).*?seconds?)?/g)];
         sayMatches.forEach(match => {
+            // Skip if this match was already processed as part of a loop
+            if (isProcessed(match)) {
+                return;
+            }
             const message = match[1];
             const duration = match[2];
             console.log(`Creating say block with message "${message}"${duration ? ` for ${duration} seconds` : ''}`);
@@ -1000,6 +1041,15 @@ const createBlocksDirectly = (aiResponse) => {
         const foreverLoopMatch = lowerResponse.match(/forever:\s*(.+?)(?=\.|$)/);
         if (foreverLoopMatch) {
             console.log('Creating forever block with nested content');
+            
+            // Mark the entire loop content as processed to prevent duplicate parsing
+            if (foreverLoopMatch.index !== undefined) {
+                processedRanges.push({
+                    start: foreverLoopMatch.index,
+                    end: foreverLoopMatch.index + foreverLoopMatch[0].length
+                });
+            }
+            
             const foreverBlock = workspace.newBlock('control_forever');
             foreverBlock.initSvg();
             foreverBlock.render();
@@ -1076,6 +1126,15 @@ const createBlocksDirectly = (aiResponse) => {
         if (repeatLoopMatch) {
             const times = repeatLoopMatch[1];
             console.log(`Creating repeat block for ${times} times with nested content`);
+            
+            // Mark the entire loop content as processed to prevent duplicate parsing
+            if (repeatLoopMatch.index !== undefined) {
+                processedRanges.push({
+                    start: repeatLoopMatch.index,
+                    end: repeatLoopMatch.index + repeatLoopMatch[0].length
+                });
+            }
+            
             const repeatBlock = workspace.newBlock('control_repeat');
             repeatBlock.initSvg();
 

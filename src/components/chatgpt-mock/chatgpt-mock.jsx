@@ -19,26 +19,38 @@ const ChatGPTMock = ({ visible = false, onClose, onBlocksGenerated }) => {
     const [chat, setChat] = useState(null);
     const [isInitialized, setIsInitialized] = useState(false);
     const [generatedBlocks, setGeneratedBlocks] = useState('');
+    const [selectedModel, setSelectedModel] = useState('gemini-2.5-flash');
     const messagesEndRef = useRef(null);
     const blocksContainerRef = useRef(null);
+    const initializingRef = useRef(false);
 
-    // Initialize the Gemini API only when component becomes visible
+    // Model mapping: display name -> actual model ID
+    const modelOptions = [
+        { displayName: 'Taurus 1.0 Pro', modelId: 'gemini-3-pro-preview' },
+        { displayName: 'Taurus 1.0', modelId: 'gemini-2.5-flash' },
+        { displayName: 'Taurus 1.0 mini', modelId: 'gemini-2.5-flash-lite' }
+    ];
+
+    // Initialize the Gemini API only when component becomes visible or model changes
     useEffect(() => {
         const initializeGemini = async () => {
-            if (visible && !isInitialized) {
+            if (visible && !initializingRef.current) {
+                initializingRef.current = true;
                 const API_KEY = "AIzaSyD_gROd6T5w-pSi9aYl47sTEsWgr2dR6pY";
                 if (!API_KEY) {
                     console.warn("Missing Gemini API key. Using mock responses.");
                     setChat('mock');
                     setIsInitialized(true);
                     setError("Missing Gemini API key.");
+                    initializingRef.current = false;
                     return;
                 }
                 try {
                     console.log("Initializing Gemini API with key:", API_KEY.substring(0, 5) + "...");
+                    console.log("Using model:", selectedModel);
                     const genAI = new GoogleGenerativeAI(API_KEY);
-                    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-                    const systemPrompt = `You are Richard, a chill game design assistant who helps create Scratch games. You understand FULL GAME CONCEPTS, not just individual blocks.
+                    const model = genAI.getGenerativeModel({ model: selectedModel });
+                    const systemPrompt = `You are Taurus, a chill game design assistant who helps create Scratch games. You understand FULL GAME CONCEPTS, not just individual blocks.
 
 GAME DESIGN MODE: When users ask for a complete game (like "make a catching game" or "create a maze game"), you should:
 1. Understand the game genre and mechanics
@@ -84,17 +96,24 @@ Be conversational, understand context, and think like a game designer!`;
                     setIsInitialized(true);
                     setError(null);
                     console.log("Successfully connected to Gemini API");
+                    initializingRef.current = false;
                 } catch (err) {
                     console.error("Error initializing Gemini API:", err);
                     setError("Gemini API initialization failed: " + (err && err.message ? err.message : JSON.stringify(err)));
                     setChat('mock');
                     setIsInitialized(true);
+                    initializingRef.current = false;
                 }
             }
         };
         
         initializeGemini();
-    }, [visible, isInitialized]);
+        
+        // Cleanup function to reset initialization flag if component unmounts or model changes
+        return () => {
+            initializingRef.current = false;
+        };
+    }, [visible, selectedModel]);
 
     // Auto scroll to bottom when new messages arrive
     useEffect(() => {
@@ -384,6 +403,22 @@ Be conversational, understand context, and think like a game designer!`;
         }
     };
 
+    const handleModelChange = (e) => {
+        const newModel = e.target.value;
+        setSelectedModel(newModel);
+        setIsInitialized(false);
+        setChat(null);
+        setError(null);
+        initializingRef.current = false;
+        // Clear messages except the initial greeting
+        setMessages([
+            {
+                role: 'assistant',
+                content: 'Hey! I\'m here to help you build some blocks. What do you want to create?'
+            }
+        ]);
+    };
+
     const handleSendMessage = async () => {
         // Check for delete commands
         const lowerInput = input.trim().toLowerCase();
@@ -607,14 +642,28 @@ Be creative and design complete, playable games!`;
     return (
         <div className={styles.chatgptContainer}>
             <div className={styles.header}>
-                <span className={styles.headerDecor}></span>
-                Richard
-                <span className={styles.headerDecor}></span>
+                <span className={styles.headerTitle}>Taurus</span>
                 {onClose && (
                     <button className={styles.closeButton} onClick={onClose}>
                         ×
                     </button>
                 )}
+            </div>
+            <div className={styles.modelSelector}>
+                <label htmlFor="model-select" className={styles.modelLabel}>Model:</label>
+                <select 
+                    id="model-select"
+                    className={styles.modelSelect}
+                    value={selectedModel}
+                    onChange={handleModelChange}
+                    disabled={isLoading}
+                >
+                    {modelOptions.map(option => (
+                        <option key={option.modelId} value={option.modelId}>
+                            {option.displayName}
+                        </option>
+                    ))}
+                </select>
             </div>
             <div className={styles.messagesContainer}>
                 {messages.map((message, index) => (

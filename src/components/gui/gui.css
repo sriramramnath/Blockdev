@@ -9,8 +9,8 @@
 
 .body-wrapper {
     height: calc(100% - $menu-bar-height);
-    background: linear-gradient(135deg, $ui-primary 0%, $ui-secondary 100%);
-    transition: background 0.3s ease;
+    background: #1F2937;
+    transition: background 0.15s ease;
 }
 
 .body-wrapper * {
@@ -54,12 +54,13 @@
     display: flex;
     flex-direction: column;
     
-    /* Add modern styling */
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(135deg, $ui-secondary 0%, $ui-tertiary 100%);
-    margin: 0.5rem;
-    padding: 0.75rem;
+    /* Cursor design system styling */
+    border-radius: 8px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    margin: 12px;
+    padding: 12px;
     overflow: hidden;
 }
 
@@ -84,14 +85,15 @@
     height: 80%;
     margin-bottom: 0;
 
-    border-radius: 1rem 1rem 0 0;
-    border: 1px solid $ui-black-transparent;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid #E5E7EB;
 
-    padding: 0.125rem 1.25rem 0;
-    font-size: 0.75rem;
+    padding: 10px 18px;
+    font-size: 13px;
 
-    background: linear-gradient(180deg, $ui-tertiary 0%, $ui-secondary 100%);
-    color: $text-primary-transparent;
+    background: #FFFFFF;
+    color: #1F2937;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
 
     display: flex;
     justify-content: center;
@@ -100,7 +102,7 @@
     user-select: none;
     white-space: nowrap;
     
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -149,19 +151,19 @@
 }
 
 .tab:hover {
-    background: linear-gradient(180deg, $ui-secondary 0%, $ui-primary 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: #F3F4F6;
+    border-color: #4A90E2;
+    box-shadow: 0 1px 4px rgba(74, 144, 226, 0.2);
 }
 
 .tab.is-selected {
     height: 90%;
-    color: $accent-primary;
-    background: linear-gradient(180deg, $ui-white 0%, rgba(255, 255, 255, 0.95) 100%);
+    color: #4A90E2;
+    background: #FFFFFF;
     z-index: 4; /* Make sure selected is always above */
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    border-color: $accent-primary;
+    box-shadow: 0 1px 4px rgba(74, 144, 226, 0.2);
+    border-color: #4A90E2;
 }
 
 .tab img {
@@ -253,12 +255,13 @@
     /* this will only ever be as wide as the stage */
     flex-basis: 0;
     
-    /* Add subtle border radius and shadow for depth */
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(135deg, $ui-secondary 0%, $ui-tertiary 100%);
-    margin: 0.5rem;
-    padding: 0.75rem;
+    /* Cursor design system styling */
+    border-radius: 8px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    margin: 12px;
+    padding: 12px;
 }
 
 .target-wrapper {
@@ -285,18 +288,18 @@
     left: 0;
     right: 0;
     z-index: $z-index-extension-button;
-    background: linear-gradient(135deg, $accent-primary 0%, $accent-secondary 100%);
+    background: #FFFFFF;
 
-    border: 1px solid $accent-primary;
+    border: 1px solid #E5E7EB;
     box-sizing: content-box; /* To match scratch-block vertical toolbox borders */
-    border-radius: 0.5rem 0.5rem 0 0;
-    transition: all 0.3s ease;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px 8px 0 0;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
 }
 
 .extension-button-container:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+    border-color: #4A90E2;
+    box-shadow: 0 1px 4px rgba(74, 144, 226, 0.2);
 }
 
 $fade-out-distance: 15px;
@@ -319,16 +322,17 @@ $fade-out-distance: 15px;
     width: 100%;
     height: 100%;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     border-radius: inherit;
 }
 
 .extension-button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: #F3F4F6;
 }
 
 .extension-button:active {
-    transform: scale(0.95);
+    background: #E5E7EB;
+    transform: translateY(1px);
 }
 
 .extension-button-icon {

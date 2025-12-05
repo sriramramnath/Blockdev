@@ -1,4 +1,4 @@
-/* Modern UI Enhancements for Scratch GUI */
+/* Cursor Design System - Modern UI Enhancements */
 
 /* Smooth scrolling for better UX */
 html {
@@ -7,42 +7,51 @@ html {
 
 /* Modern focus styles */
 *:focus {
-    outline: 2px solid $accent-primary;
+    outline: 2px solid #4A90E2;
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 /* Enhanced button styles */
 button {
-    transition: all 0.2s ease;
-    border-radius: 6px;
+    transition: all 0.15s ease;
+    border-radius: 8px;
     font-weight: 500;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
 }
 
 button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 4px rgba(74, 144, 226, 0.2);
 }
 
 button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
 }
 
 /* Modern input styles */
 input, textarea, select {
-    transition: all 0.2s ease;
-    border-radius: 6px;
-    border: 1px solid $ui-tertiary;
-    background: $ui-secondary;
-    color: $ui-white;
-    padding: 0.5rem 0.75rem;
+    transition: all 0.15s ease;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+    background: #FFFFFF;
+    color: #1F2937;
+    padding: 8px 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    font-size: 13px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
 }
 
 input:focus, textarea:focus, select:focus {
-    border-color: $accent-primary;
-    box-shadow: 0 0 0 3px rgba(184, 134, 91, 0.1);
-    background: $ui-tertiary;
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1), 0 1px 4px rgba(0, 0, 0, 0.18);
+    outline: none;
+}
+
+input:hover:not(:focus), textarea:hover:not(:focus), select:hover:not(:focus) {
+    border-color: #D1D5DB;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
 }
 
 /* Loading animation */
@@ -70,76 +79,76 @@ input:focus, textarea:focus, select:focus {
 }
 
 .shimmer {
-    background: linear-gradient(90deg, $ui-tertiary 25%, $ui-secondary 50%, $ui-tertiary 75%);
+    background: linear-gradient(90deg, #374151 25%, #1F2937 50%, #374151 75%);
     background-size: 200px 100%;
     animation: shimmer 1.5s infinite;
 }
 
 /* Modern card styles */
 .card {
-    background: linear-gradient(135deg, $ui-secondary 0%, $ui-tertiary 100%);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+    border: 1px solid #E5E7EB;
+    transition: all 0.15s ease;
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 4px rgba(74, 144, 226, 0.2);
 }
 
 /* Modern tooltip styles */
 .tooltip {
-    background: $ui-primary;
-    color: $ui-white;
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #1F2937;
+    color: #D1D5DB;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+    border: 1px solid #374151;
 }
 
 /* Enhanced scrollbar styles */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: $ui-secondary;
-    border-radius: 4px;
+    background: #1F2937;
+    border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: $ui-tertiary;
-    border-radius: 4px;
-    transition: background 0.2s ease;
+    background: #374151;
+    border-radius: 8px;
+    transition: background 0.15s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: $accent-primary;
+    background: #4B5563;
 }
 
 /* Modern modal styles */
 .modal-overlay {
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
-    transition: all 0.3s ease;
+    transition: all 0.15s ease;
 }
 
 .modal-content {
-    background: linear-gradient(135deg, $ui-secondary 0%, $ui-tertiary 100%);
-    border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    animation: modalSlideIn 0.3s ease;
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+    border: 1px solid #E5E7EB;
+    animation: modalSlideIn 0.15s ease;
 }
 
 @keyframes modalSlideIn {
     from {
         opacity: 0;
-        transform: scale(0.9) translateY(-20px);
+        transform: scale(0.95) translateY(-10px);
     }
     to {
         opacity: 1;
@@ -149,22 +158,22 @@ input:focus, textarea:focus, select:focus {
 
 /* Enhanced dropdown styles */
 .dropdown {
-    background: $ui-secondary;
-    border: 1px solid $ui-tertiary;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
     overflow: hidden;
 }
 
 .dropdown-item {
-    padding: 0.75rem 1rem;
-    transition: all 0.2s ease;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 10px 14px;
+    transition: all 0.15s ease;
+    border-radius: 6px;
 }
 
 .dropdown-item:hover {
-    background: $ui-tertiary;
-    color: $accent-primary;
+    background: #F3F4F6;
+    color: #4A90E2;
 }
 
 .dropdown-item:last-child {
@@ -173,34 +182,35 @@ input:focus, textarea:focus, select:focus {
 
 /* Modern progress bar */
 .progress-bar {
-    background: $ui-tertiary;
-    border-radius: 10px;
+    background: #E5E7EB;
+    border-radius: 8px;
     overflow: hidden;
     height: 8px;
 }
 
 .progress-fill {
-    background: linear-gradient(90deg, $accent-primary 0%, $accent-secondary 100%);
+    background: linear-gradient(90deg, #4A90E2 0%, #60A5FA 100%);
     height: 100%;
     transition: width 0.3s ease;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 /* Enhanced notification styles */
 .notification {
-    background: linear-gradient(135deg, $ui-secondary 0%, $ui-tertiary 100%);
+    background: #FFFFFF;
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    border-left: 4px solid $accent-primary;
-    padding: 1rem;
-    margin: 0.5rem 0;
-    animation: slideInRight 0.3s ease;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+    border-left: 4px solid #4A90E2;
+    padding: 14px 18px;
+    margin: 12px 0;
+    animation: slideInRight 0.15s ease;
+    border: 1px solid #E5E7EB;
 }
 
 @keyframes slideInRight {
     from {
         opacity: 0;
-        transform: translateX(100%);
+        transform: translateX(20px);
     }
     to {
         opacity: 1;
@@ -210,11 +220,11 @@ input:focus, textarea:focus, select:focus {
 
 /* Modern badge styles */
 .badge {
-    background: linear-gradient(135deg, $accent-primary 0%, $accent-secondary 100%);
+    background: #4A90E2;
     color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -222,27 +232,28 @@ input:focus, textarea:focus, select:focus {
 
 /* Enhanced table styles */
 .table {
-    background: $ui-secondary;
+    background: #FFFFFF;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+    border: 1px solid #E5E7EB;
 }
 
 .table-header {
-    background: $ui-tertiary;
-    padding: 1rem;
+    background: #F3F4F6;
+    padding: 12px 16px;
     font-weight: 600;
-    color: $ui-white;
+    color: #1F2937;
 }
 
 .table-row {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: background 0.2s ease;
+    padding: 10px 16px;
+    border-bottom: 1px solid #E5E7EB;
+    transition: background 0.15s ease;
 }
 
 .table-row:hover {
-    background: $ui-tertiary;
+    background: #F3F4F6;
 }
 
 .table-row:last-child {
@@ -270,8 +281,8 @@ input:focus, textarea:focus, select:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background: $ui-tertiary;
-    transition: 0.3s;
+    background: #E5E7EB;
+    transition: 0.15s;
     border-radius: 24px;
 }
 
@@ -283,13 +294,13 @@ input:focus, textarea:focus, select:focus {
     left: 3px;
     bottom: 3px;
     background: white;
-    transition: 0.3s;
+    transition: 0.15s;
     border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
 }
 
 input:checked + .slider {
-    background: $accent-primary;
+    background: #4A90E2;
 }
 
 input:checked + .slider:before {
@@ -299,28 +310,32 @@ input:checked + .slider:before {
 /* Responsive design improvements */
 @media (max-width: 768px) {
     .card {
-        margin: 0.5rem;
+        margin: 8px;
         border-radius: 8px;
     }
     
     .modal-content {
-        margin: 1rem;
+        margin: 16px;
         border-radius: 8px;
     }
     
     button {
-        padding: 0.75rem 1rem;
-        font-size: 0.875rem;
+        padding: 8px 14px;
+        font-size: 13px;
     }
 }
 
 /* Dark mode enhancements */
 @media (prefers-color-scheme: dark) {
     .card {
-        border-color: rgba(255, 255, 255, 0.2);
+        border-color: #374151;
+        background: #1F2937;
+        color: #D1D5DB;
     }
     
     .modal-content {
-        border-color: rgba(255, 255, 255, 0.2);
+        border-color: #374151;
+        background: #1F2937;
+        color: #D1D5DB;
     }
 }
