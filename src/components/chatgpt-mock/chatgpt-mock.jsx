@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './chatgpt-mock.css';
-import './roman-global-theme.css';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { handleAISuggestion, createBlockJSON } from '../../lib/ai-block-generator';
 import scratchblocks from 'scratchblocks';
 import { createBlocksDirectly } from './simpleBlockCreator';
+import { detectGameType, generateGameDescription, templateToBlockCommands, GAME_TEMPLATES } from './gameTemplates';
 
 const ChatGPTMock = ({ visible = false, onClose, onBlocksGenerated }) => {
     const [messages, setMessages] = useState([
         {
             role: 'assistant',
-            content: 'Hey there! What question would you like to ask Maximus?'
+            content: 'Hey! I\'m here to help you build some blocks. What do you want to create?'
         }
     ]);
     const [input, setInput] = useState('');
@@ -26,7 +26,7 @@ const ChatGPTMock = ({ visible = false, onClose, onBlocksGenerated }) => {
     useEffect(() => {
         const initializeGemini = async () => {
             if (visible && !isInitialized) {
-                const API_KEY = "AIzaSyBZwm4AOpDTnmF0LHzYpKz_4fON8fvqWpo";
+                const API_KEY = "AIzaSyD_gROd6T5w-pSi9aYl47sTEsWgr2dR6pY";
                 if (!API_KEY) {
                     console.warn("Missing Gemini API key. Using mock responses.");
                     setChat('mock');
@@ -38,7 +38,46 @@ const ChatGPTMock = ({ visible = false, onClose, onBlocksGenerated }) => {
                     console.log("Initializing Gemini API with key:", API_KEY.substring(0, 5) + "...");
                     const genAI = new GoogleGenerativeAI(API_KEY);
                     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-                    const systemPrompt = "You are Maximus, A helpful and friendly assistant";
+                    const systemPrompt = `You are Richard, a chill game design assistant who helps create Scratch games. You understand FULL GAME CONCEPTS, not just individual blocks.
+
+GAME DESIGN MODE: When users ask for a complete game (like "make a catching game" or "create a maze game"), you should:
+1. Understand the game genre and mechanics
+2. Design all necessary sprites and their behaviors
+3. Create complete event handlers and game loops
+4. Set up variables for scoring, lives, etc.
+5. Respond with a COMPLETE game plan in natural language
+
+COMMON GAME PATTERNS YOU KNOW:
+- Catching Game: Sprite at bottom moves left/right, objects fall from top, catch them for points
+- Chase Game: Sprite chases another sprite, avoid obstacles, timer-based
+- Maze Game: Navigate through maze, reach goal, avoid walls
+- Clicker Game: Click sprite for points, animations on click
+- Drawing Game: Follow mouse, pen down to draw, clear button
+- Platformer: Move left/right, jump, gravity, platforms
+- Avoid Game: Dodge falling objects, move around, game over on hit
+
+When describing a game, use natural language to describe:
+- What each sprite should do
+- When things should happen (events)
+- How things should move
+- What variables to track
+- The complete game flow
+
+BLOCK COMMAND MODE: You can still create specific blocks when asked:
+- Motion: "move X steps", "turn left/right X degrees", "go to x: X y: Y"
+- Looks: "say [message]", "show", "hide", "change size by X"
+- Sound: "play sound [name]"
+- Events: "when flag clicked", "when sprite clicked", "broadcast [message]"
+- Control: "wait X seconds", "repeat X", "forever", "if-then"
+- Sensing: "ask [question] and wait", "touching [object]", "key pressed"
+- Pen: "pen down", "pen up", "clear"
+- Variables: "set [var] to X", "change [var] by X"
+- Delete: "delete all", "delete the move block", "delete last block"
+- Update: "change move to 20", "change wait to 2"
+
+LOOP SYNTAX: Both formats work - "move 10 steps forever" OR "forever: move 10 steps"
+
+Be conversational, understand context, and think like a game designer!`;
                     const chatSession = model.startChat();
                     await chatSession.sendMessage(systemPrompt);
                     setChat(chatSession);
@@ -67,6 +106,77 @@ const ChatGPTMock = ({ visible = false, onClose, onBlocksGenerated }) => {
         if (!text || typeof text !== 'string') return '';
 
         console.log('Converting text to scratchblocks:', text);
+
+        const lowerText = text.toLowerCase();
+
+        // Check for delete commands first - return empty to avoid creating blocks
+        if ((lowerText.includes('delete') || lowerText.includes('clear')) &&
+            (lowerText.includes('all') || lowerText.includes('everything'))) {
+            return '';
+        }
+
+        // Check for forever loops with nested blocks
+        const foreverLoopMatch = lowerText.match(/forever:\s*(.+?)(?=\.|$)/);
+        if (foreverLoopMatch) {
+            const nestedCommands = foreverLoopMatch[1];
+            const nestedBlocks = [];
+
+            // Parse nested commands
+            const moveMatches = [...nestedCommands.matchAll(/move.*?(\d+).*?steps?/g)];
+            moveMatches.forEach(m => nestedBlocks.push(`  move (${m[1]}) steps`));
+
+            const turnLeftMatches = [...nestedCommands.matchAll(/turn.*?left.*?(\d+).*?degrees?/g)];
+            turnLeftMatches.forEach(m => nestedBlocks.push(`  turn ccw (${m[1]}) degrees`));
+
+            const turnRightMatches = [...nestedCommands.matchAll(/turn.*?right.*?(\d+).*?degrees?/g)];
+            turnRightMatches.forEach(m => nestedBlocks.push(`  turn cw (${m[1]}) degrees`));
+
+            const waitMatches = [...nestedCommands.matchAll(/wait.*?(\d+(?:\.\d+)?).*?seconds?/g)];
+            waitMatches.forEach(m => nestedBlocks.push(`  wait (${m[1]}) seconds`));
+
+            const sayMatches = [...nestedCommands.matchAll(/say.*?['""]([^'""]*)['""](?:.*?for.*?(\d+).*?seconds?)?/g)];
+            sayMatches.forEach(m => {
+                if (m[2]) {
+                    nestedBlocks.push(`  say [${m[1]}] for (${m[2]}) seconds`);
+                } else {
+                    nestedBlocks.push(`  say [${m[1]}]`);
+                }
+            });
+
+            return 'when flag clicked\nforever\n' + nestedBlocks.join('\n');
+        }
+
+        // Check for repeat loops with nested blocks
+        const repeatLoopMatch = lowerText.match(/repeat (\d+):\s*(.+?)(?=\.|$)/);
+        if (repeatLoopMatch) {
+            const times = repeatLoopMatch[1];
+            const nestedCommands = repeatLoopMatch[2];
+            const nestedBlocks = [];
+
+            // Parse nested commands
+            const moveMatches = [...nestedCommands.matchAll(/move.*?(\d+).*?steps?/g)];
+            moveMatches.forEach(m => nestedBlocks.push(`  move (${m[1]}) steps`));
+
+            const turnLeftMatches = [...nestedCommands.matchAll(/turn.*?left.*?(\d+).*?degrees?/g)];
+            turnLeftMatches.forEach(m => nestedBlocks.push(`  turn ccw (${m[1]}) degrees`));
+
+            const turnRightMatches = [...nestedCommands.matchAll(/turn.*?right.*?(\d+).*?degrees?/g)];
+            turnRightMatches.forEach(m => nestedBlocks.push(`  turn cw (${m[1]}) degrees`));
+
+            const waitMatches = [...nestedCommands.matchAll(/wait.*?(\d+(?:\.\d+)?).*?seconds?/g)];
+            waitMatches.forEach(m => nestedBlocks.push(`  wait (${m[1]}) seconds`));
+
+            const sayMatches = [...nestedCommands.matchAll(/say.*?['""]([^'""]*)['""](?:.*?for.*?(\d+).*?seconds?)?/g)];
+            sayMatches.forEach(m => {
+                if (m[2]) {
+                    nestedBlocks.push(`  say [${m[1]}] for (${m[2]}) seconds`);
+                } else {
+                    nestedBlocks.push(`  say [${m[1]}]`);
+                }
+            });
+
+            return `when flag clicked\nrepeat (${times})\n` + nestedBlocks.join('\n');
+        }
 
         const sentences = text.split(/[.!?]+/).map(s => s.trim()).filter(s => s);
         const blockCommands = [];
@@ -275,6 +385,70 @@ const ChatGPTMock = ({ visible = false, onClose, onBlocksGenerated }) => {
     };
 
     const handleSendMessage = async () => {
+        // Check for delete commands
+        const lowerInput = input.trim().toLowerCase();
+
+        // Delete all
+        if ((lowerInput.includes('delete') || lowerInput.includes('clear') || lowerInput.includes('remove')) &&
+            (lowerInput.includes('all') || lowerInput.includes('everything'))) {
+            if (window.deleteAllBlocks) {
+                window.deleteAllBlocks();
+            }
+            setMessages(prev => [...prev,
+                { role: 'user', content: input },
+                { role: 'assistant', content: 'All blocks deleted! Ready for a fresh start.' }
+            ]);
+            setInput('');
+            setGeneratedBlocks('');
+            return;
+        }
+
+        // Change/update block values
+        if (lowerInput.includes('change') && (lowerInput.includes('to') || lowerInput.includes('='))) {
+            if (window.updateBlockValue) {
+                // Match patterns like "change move to 20" or "change turn left to 45"
+                const changeMatch = lowerInput.match(/change\s+(?:the\s+)?(move|turn left|turn right|wait|size|repeat)(?:\s+block)?\s+to\s+(\d+)/);
+                if (changeMatch) {
+                    const blockType = changeMatch[1];
+                    const newValue = changeMatch[2];
+                    const result = window.updateBlockValue(blockType, newValue);
+                    const message = result.count > 0
+                        ? `Updated ${result.count} ${blockType} block(s) to ${newValue}.`
+                        : `Couldn't find any ${blockType} blocks to update.`;
+
+                    setMessages(prev => [...prev,
+                        { role: 'user', content: input },
+                        { role: 'assistant', content: message }
+                    ]);
+                    setInput('');
+                    setGeneratedBlocks('');
+                    return;
+                }
+            }
+        }
+
+        // Delete specific blocks
+        if (lowerInput.includes('delete') || lowerInput.includes('remove')) {
+            if (window.deleteSpecificBlocks) {
+                // Extract what to delete (everything after "delete" or "remove")
+                const deleteMatch = lowerInput.match(/(?:delete|remove)\s+(?:the\s+)?(.+)/);
+                if (deleteMatch) {
+                    const result = window.deleteSpecificBlocks(deleteMatch[1]);
+                    const message = result.count > 0
+                        ? `Deleted ${result.count} block(s).`
+                        : `Couldn't find any blocks matching "${deleteMatch[1]}". Try being more specific!`;
+
+                    setMessages(prev => [...prev,
+                        { role: 'user', content: input },
+                        { role: 'assistant', content: message }
+                    ]);
+                    setInput('');
+                    setGeneratedBlocks('');
+                    return;
+                }
+            }
+        }
+
         // Custom rule: handle 'move X steps for each click' and similar requests
         const clickMoveMatch = input.trim().match(/move (\d+) steps? (for|on|each)? (every )?(click|mouse click|sprite click|when clicked)/i);
         if (clickMoveMatch) {
@@ -329,33 +503,47 @@ const ChatGPTMock = ({ visible = false, onClose, onBlocksGenerated }) => {
             // Handle mock mode
             if (chat === 'mock') {
                 const mockResponses = [
-                    `By the gods, I understand your quest! Here is my battle plan: when flag clicked, move 10 steps, turn right 90 degrees, say "Hello World!" for 2 seconds, wait 1 second, repeat forever.`,
-                    `Hark! Your request commands a strategic approach: when flag clicked, move 50 steps, play sound "pop", think "Victory is mine!" for 2 seconds, turn left 45 degrees, repeat forever.`,
-                    `Lo! The spirits reveal this programming strategy: when flag clicked, move 20 steps, change color effect by 25, say "I am ready!" for 1 second, wait 1 second, turn right 180 degrees, repeat forever.`,
-                    `Behold! The ancient scrolls speak of this solution: when flag clicked, move 30 steps, play sound "meow", think "Onward to glory!" for 2 seconds, turn right 15 degrees, wait 2 seconds, repeat forever.`,
-                    `By Jupiter's wisdom! Your challenge requires this tactical plan: when flag clicked, move 40 steps, say "For Rome!" for 1 second, turn left 60 degrees, change size by 10, wait 3 seconds, repeat forever.`
+                    `move 10 steps, turn right 90 degrees`,
+                    `move 50 steps, turn left 45 degrees`,
+                    `move 20 steps, turn right 180 degrees`,
+                    `move 30 steps, turn right 15 degrees`,
+                    `move 40 steps, turn left 60 degrees`
                 ];
                 const randomIndex = Math.floor(Math.random() * mockResponses.length);
                 responseText = mockResponses[randomIndex];
                 await new Promise(resolve => setTimeout(resolve, 1500));
             } else {
-                // Enhanced prompt for real AI to generate programming plans
+                // Enhanced prompt - supports both game-level and block-level requests
                 const enhancedPrompt = `${input.trim()}
 
-Please respond as Maximus, a Roman Commander, and create a step-by-step programming plan using Scratch blocks. Format your response with clear block commands like:
+RESPONSE FORMAT:
+If the user is asking for a COMPLETE GAME (e.g., "make a catching game", "create a platformer"), respond with:
+1. A brief description of the game concept
+2. Detailed instructions for what each sprite should do
+3. All the block sequences needed in natural language
 
-- "when flag clicked" (to start the program)
-- "move X steps" (for movement with specific numbers)
-- "turn left X degrees" or "turn right X degrees" (for rotation with specific numbers)
-- "say [message] for X seconds" or "say [message]" (for speech)
-- "think [message] for X seconds" or "think [message]" (for thoughts)
-- "play sound [sound name]" (for audio)
-- "wait X seconds" (for timing)
-- "change [effect] by X" (for visual effects)
-- "set [property] to X" (for setting values)
-- "repeat X" or "repeat forever" (for loops)
+If the user is asking for SPECIFIC BLOCKS, respond ONLY with the block commands directly, no intro text.
 
-Be specific with numbers and messages. Structure your response to clearly show the sequence of blocks that should be created.`;
+BLOCK COMMANDS REFERENCE:
+- Events: "when flag clicked", "when this sprite clicked"
+- Motion: "move X steps", "turn left/right X degrees", "go to x: X y: Y"
+- Looks: "say [message]", "think [message]", "show", "hide", "change size by X"
+- Sound: "play sound [name]"
+- Control: "wait X seconds", "repeat X" or "forever"
+- Sensing: "ask [question] and wait", "touching [object]"
+- Pen: "pen down", "pen up", "clear"
+- Variables: "set variable [name] to X", "change variable [name] by X"
+
+LOOP SYNTAX OPTIONS:
+- Natural: "move 10 steps forever" OR "move 10 steps repeat 5"
+- Colon: "forever: move 10 steps" OR "repeat 5: move 10 steps"
+
+SPECIAL COMMANDS:
+- Delete: "delete all", "delete the move block", "delete last block"
+- Update: "change move to 20", "change wait to 2"
+
+For games, think about: sprites, events, game loop, scoring, collision detection, and win/lose conditions.
+Be creative and design complete, playable games!`;
                 try {
                     const result = await chat.sendMessage(enhancedPrompt);
                     const response = await result.response;
@@ -370,12 +558,12 @@ Be specific with numbers and messages. Structure your response to clearly show t
                         }
                     } else {
                         console.log("Response structure:", JSON.stringify(response));
-                        responseText = "The Oracle's response is enigmatic.";
+                        responseText = "Hmm, I'm not sure what to say here.";
                     }
                 } catch (err) {
                     console.error("Error with Gemini API (sendMessage):", err);
                     setError("Gemini API sendMessage failed: " + (err && err.message ? err.message : JSON.stringify(err)));
-                    responseText = "The Oracle's connection to the cosmos is interrupted.";
+                    responseText = "Sorry, having some connection issues right now.";
                 }
             }
             // Parse the AI response to extract blocks (for backward compatibility)
@@ -390,7 +578,7 @@ Be specific with numbers and messages. Structure your response to clearly show t
                 const totalBlocks = Math.max(functionalBlocks.length, extractedBlocks.length);
                 const blockMessage = {
                     role: 'assistant',
-                    content: `Hail! I have analyzed the strategy and forged ${totalBlocks + 1} blocks for your construction! The blocks are now positioned in your workspace and shown below as a visual preview.`
+                    content: `Nice! I created ${totalBlocks + 1} blocks for you. They're now in your workspace and you can see a preview below.`
                 };
                 setMessages(prev => [...prev, blockMessage]);
             }
@@ -405,7 +593,7 @@ Be specific with numbers and messages. Structure your response to clearly show t
                 ...prev, 
                 { 
                     role: 'assistant', 
-                    content: "Maximus is busy right now, but feel free to ask him any questions later!" 
+                    content: "Oops, something went wrong on my end. Try asking again!" 
                 }
             ]);
         } finally {
@@ -420,7 +608,7 @@ Be specific with numbers and messages. Structure your response to clearly show t
         <div className={styles.chatgptContainer}>
             <div className={styles.header}>
                 <span className={styles.headerDecor}></span>
-                Maximus
+                Richard
                 <span className={styles.headerDecor}></span>
                 {onClose && (
                     <button className={styles.closeButton} onClick={onClose}>
@@ -460,7 +648,7 @@ Be specific with numbers and messages. Structure your response to clearly show t
                 <input 
                     type="text" 
                     className={styles.input} 
-                    placeholder="Ask your question to the Maximus..."
+                    placeholder="What do you want to build?"
                     value={input}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}

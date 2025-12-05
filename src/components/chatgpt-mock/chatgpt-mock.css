@@ -7,7 +7,7 @@
     background: #1f1f1f;
     display: flex;
     flex-direction: column;
-    border-right: 2px solid #65272C;
+    border-right: 2px solid #4a9eff;
     z-index: 1000;
     font-family: 'Inter', 'Helvetica Neue', sans-serif;
 }
@@ -20,7 +20,7 @@
     text-align: center;
     color: #ffffff;
     letter-spacing: 2px;
-    border-bottom: 2px solid #65272C;
+    border-bottom: 2px solid #4a9eff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     position: relative;
 }
@@ -29,7 +29,7 @@
     display: inline-block;
     width: 20px;
     height: 2px;
-    background-color: #65272C;
+    background-color: #4a9eff;
     margin: 0 10px;
     vertical-align: middle;
 }
@@ -59,7 +59,7 @@
     padding: 1.5rem;
     background: linear-gradient(135deg, #1f1f1f 0%, #1f1f1f 100%);
     scrollbar-width: thin;
-    scrollbar-color: #65272C #65272C;
+    scrollbar-color: #4a9eff #4a9eff;
 }
 
 .messagesContainer::-webkit-scrollbar {
@@ -72,13 +72,13 @@
 }
 
 .messagesContainer::-webkit-scrollbar-thumb {
-    background: #65272C;
+    background: #4a9eff;
     border-radius: 3px;
-    box-shadow: 0 0 5px rgba(218, 165, 32, 0.3);
+    box-shadow: 0 0 5px rgba(74, 158, 255, 0.3);
 }
 
 .messagesContainer::-webkit-scrollbar-thumb:hover {
-    background: #65272C;
+    background: #6bb0ff;
 }
 
 .message {
@@ -92,7 +92,7 @@
     max-width: 90%;
     margin-left: auto;
     margin-right: auto;
-    border-left: 3px solid #65272C;
+    border-left: 3px solid #4a9eff;
     color: #ffffff;
     font-size: 0.95rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -116,7 +116,7 @@
 }
 
 .error {
-    border-left: 3px solid #65272C;
+    border-left: 3px solid #ef4444;
     background: #3a2a2a;
 }
 
@@ -158,7 +158,7 @@
 
 .inputArea {
     padding: 1.5rem;
-    border-top: 2px solid #65272C;
+    border-top: 2px solid #4a9eff;
     display: flex;
     gap: 0.8rem;
     background: #262626;
@@ -168,7 +168,7 @@
 .input {
     flex: 1;
     padding: 0.8rem 1rem;
-    border: 1px solid #65272C;
+    border: 1px solid #4a9eff;
     border-radius: 6px;
     font-size: 0.95rem;
     background: #1f1f1f;
@@ -182,7 +182,7 @@
 
 .sendButton {
     padding: 0.8rem 1.5rem;
-    background: #65272C;
+    background: #4a9eff;
     color: #ffffff;
     border: none;
     border-radius: 6px;
@@ -193,7 +193,7 @@
 }
 
 .sendButton:hover {
-    background: #b91c1c;
+    background: #6bb0ff;
     transform: translateY(-1px);
 }
 

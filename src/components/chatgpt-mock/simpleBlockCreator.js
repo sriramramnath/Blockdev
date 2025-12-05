@@ -3,10 +3,274 @@
  * This approach directly creates blocks using the Scratch workspace API
  */
 
+// Helper function to delete all blocks in workspace
+const deleteAllBlocks = () => {
+    let workspace = null;
+    if (window.ScratchBlocks && window.ScratchBlocks.getMainWorkspace) {
+        workspace = window.ScratchBlocks.getMainWorkspace();
+    } else if (window.Blockly && window.Blockly.getMainWorkspace) {
+        workspace = window.Blockly.getMainWorkspace();
+    }
+
+    if (!workspace) {
+        console.error('No workspace found');
+        return false;
+    }
+
+    workspace.clear();
+    console.log('All blocks deleted');
+    return true;
+};
+
+// Helper function to update/change block values
+const updateBlockValue = (blockType, newValue) => {
+    let workspace = null;
+    if (window.ScratchBlocks && window.ScratchBlocks.getMainWorkspace) {
+        workspace = window.ScratchBlocks.getMainWorkspace();
+    } else if (window.Blockly && window.Blockly.getMainWorkspace) {
+        workspace = window.Blockly.getMainWorkspace();
+    }
+
+    if (!workspace) {
+        console.error('No workspace found');
+        return { success: false, count: 0 };
+    }
+
+    const allBlocks = workspace.getAllBlocks();
+    let updatedCount = 0;
+
+    // Map block types
+    const typeMap = {
+        'move': 'motion_movesteps',
+        'turn left': 'motion_turnleft',
+        'turn right': 'motion_turnright',
+        'wait': 'control_wait',
+        'size': 'looks_setsizeto',
+        'repeat': 'control_repeat'
+    };
+
+    const targetType = typeMap[blockType] || blockType;
+
+    allBlocks.forEach(block => {
+        if (block.type === targetType) {
+            // Find the input field and update it
+            let inputName = null;
+            if (block.type === 'motion_movesteps') inputName = 'STEPS';
+            else if (block.type === 'motion_turnleft' || block.type === 'motion_turnright') inputName = 'DEGREES';
+            else if (block.type === 'control_wait') inputName = 'DURATION';
+            else if (block.type === 'looks_setsizeto') inputName = 'SIZE';
+            else if (block.type === 'control_repeat') inputName = 'TIMES';
+
+            if (inputName) {
+                const input = block.getInput(inputName);
+                if (input && input.connection && input.connection.targetBlock()) {
+                    const numberBlock = input.connection.targetBlock();
+                    if (numberBlock.type === 'math_number') {
+                        numberBlock.setFieldValue(newValue, 'NUM');
+                        updatedCount++;
+                    }
+                }
+            }
+        }
+    });
+
+    console.log(`Updated ${updatedCount} block(s) to value ${newValue}`);
+    return { success: true, count: updatedCount };
+};
+
+// Helper function to delete specific blocks
+const deleteSpecificBlocks = (blockDescription) => {
+    let workspace = null;
+    if (window.ScratchBlocks && window.ScratchBlocks.getMainWorkspace) {
+        workspace = window.ScratchBlocks.getMainWorkspace();
+    } else if (window.Blockly && window.Blockly.getMainWorkspace) {
+        workspace = window.Blockly.getMainWorkspace();
+    }
+
+    if (!workspace) {
+        console.error('No workspace found');
+        return { success: false, count: 0 };
+    }
+
+    const allBlocks = workspace.getAllBlocks();
+    const lowerDesc = blockDescription.toLowerCase();
+    let deletedCount = 0;
+
+    // Map common descriptions to block types
+    const blockTypeMap = {
+        'move': 'motion_movesteps',
+        'turn left': 'motion_turnleft',
+        'turn right': 'motion_turnright',
+        'turn': ['motion_turnleft', 'motion_turnright'],
+        'say': ['looks_say', 'looks_sayforsecs'],
+        'think': ['looks_think', 'looks_thinkforsecs'],
+        'wait': 'control_wait',
+        'repeat': 'control_repeat',
+        'forever': 'control_forever',
+        'when flag clicked': 'event_whenflagclicked',
+        'flag': 'event_whenflagclicked',
+        'when clicked': 'event_whenthisspriteclicked'
+    };
+
+    // Check for "last block" or "last X blocks"
+    if (lowerDesc.includes('last')) {
+        const countMatch = lowerDesc.match(/last (\d+)/);
+        const count = countMatch ? parseInt(countMatch[1]) : 1;
+
+        // Get all top-level blocks (not nested inside other blocks)
+        const topBlocks = allBlocks.filter(block => !block.getParent());
+
+        // Sort by position (assuming blocks added later are further down)
+        topBlocks.sort((a, b) => {
+            const aPos = a.getRelativeToSurfaceXY();
+            const bPos = b.getRelativeToSurfaceXY();
+            return bPos.y - aPos.y; // Higher Y values are lower on screen
+        });
+
+        // Delete the last N blocks
+        for (let i = 0; i < Math.min(count, topBlocks.length); i++) {
+            topBlocks[i].dispose(true);
+            deletedCount++;
+        }
+
+        console.log(`Deleted ${deletedCount} last block(s)`);
+        return { success: true, count: deletedCount };
+    }
+
+    // Check for specific block types
+    let targetTypes = [];
+    for (const [key, types] of Object.entries(blockTypeMap)) {
+        if (lowerDesc.includes(key)) {
+            targetTypes = Array.isArray(types) ? types : [types];
+            break;
+        }
+    }
+
+    if (targetTypes.length > 0) {
+        // Delete all blocks of the specified type(s)
+        allBlocks.forEach(block => {
+            if (targetTypes.includes(block.type)) {
+                block.dispose(true);
+                deletedCount++;
+            }
+        });
+
+        console.log(`Deleted ${deletedCount} block(s) of type ${targetTypes.join(', ')}`);
+        return { success: true, count: deletedCount };
+    }
+
+    // If no specific type found, try to delete by keyword in the block
+    allBlocks.forEach(block => {
+        const blockText = block.toString().toLowerCase();
+        if (blockText.includes(lowerDesc)) {
+            block.dispose(true);
+            deletedCount++;
+        }
+    });
+
+    console.log(`Deleted ${deletedCount} block(s) matching "${blockDescription}"`);
+    return { success: true, count: deletedCount };
+};
+
+// Helper function to create a block and connect it
+const createAndConnectBlock = (workspace, blockType, params, parentBlock, isNested = false) => {
+    const block = workspace.newBlock(blockType);
+    block.initSvg();
+
+    // Apply parameters based on block type
+    if (params) {
+        if (params.steps && blockType === 'motion_movesteps') {
+            const stepsInput = block.getInput('STEPS');
+            if (stepsInput) {
+                const numberBlock = workspace.newBlock('math_number');
+                numberBlock.initSvg();
+                numberBlock.setFieldValue(params.steps, 'NUM');
+                numberBlock.render();
+                stepsInput.connection.connect(numberBlock.outputConnection);
+            }
+        } else if (params.degrees && (blockType === 'motion_turnleft' || blockType === 'motion_turnright')) {
+            const degreesInput = block.getInput('DEGREES');
+            if (degreesInput) {
+                const numberBlock = workspace.newBlock('math_number');
+                numberBlock.initSvg();
+                numberBlock.setFieldValue(params.degrees, 'NUM');
+                numberBlock.render();
+                degreesInput.connection.connect(numberBlock.outputConnection);
+            }
+        } else if (params.times && blockType === 'control_repeat') {
+            const timesInput = block.getInput('TIMES');
+            if (timesInput) {
+                const numberBlock = workspace.newBlock('math_number');
+                numberBlock.initSvg();
+                numberBlock.setFieldValue(params.times, 'NUM');
+                numberBlock.render();
+                timesInput.connection.connect(numberBlock.outputConnection);
+            }
+        } else if (params.message && (blockType.startsWith('looks_say') || blockType.startsWith('looks_think'))) {
+            const messageInput = block.getInput('MESSAGE');
+            if (messageInput) {
+                const textBlock = workspace.newBlock('text');
+                textBlock.initSvg();
+                textBlock.setFieldValue(params.message, 'TEXT');
+                textBlock.render();
+                messageInput.connection.connect(textBlock.outputConnection);
+            }
+            if (params.duration) {
+                const secsInput = block.getInput('SECS');
+                if (secsInput) {
+                    const numberBlock = workspace.newBlock('math_number');
+                    numberBlock.initSvg();
+                    numberBlock.setFieldValue(params.duration, 'NUM');
+                    numberBlock.render();
+                    secsInput.connection.connect(numberBlock.outputConnection);
+                }
+            }
+        } else if (params.seconds && blockType === 'control_wait') {
+            const durationInput = block.getInput('DURATION');
+            if (durationInput) {
+                const numberBlock = workspace.newBlock('math_number');
+                numberBlock.initSvg();
+                numberBlock.setFieldValue(params.seconds, 'NUM');
+                numberBlock.render();
+                durationInput.connection.connect(numberBlock.outputConnection);
+            }
+        }
+    }
+
+    block.render();
+
+    // Connect to parent block
+    if (parentBlock) {
+        if (isNested && parentBlock.getInput('SUBSTACK')) {
+            // Connect inside a loop/control structure
+            const substackConnection = parentBlock.getInput('SUBSTACK').connection;
+            if (substackConnection && block.previousConnection) {
+                substackConnection.connect(block.previousConnection);
+            }
+        } else if (parentBlock.nextConnection && block.previousConnection) {
+            // Connect below the parent block
+            parentBlock.nextConnection.connect(block.previousConnection);
+        }
+    }
+
+    return block;
+};
+
 // Simple function to create blocks directly in the workspace
 const createBlocksDirectly = (aiResponse) => {
-    console.log('Creating blocks directly from AI response:', aiResponse);
-    
+    console.log('========================================');
+    console.log('Creating blocks from AI response:', aiResponse);
+    console.log('========================================');
+
+    // Check if user wants to delete blocks
+    const lowerResponse = aiResponse.toLowerCase();
+    if (lowerResponse.includes('delete') || lowerResponse.includes('clear') || lowerResponse.includes('remove all')) {
+        if (lowerResponse.includes('all') || lowerResponse.includes('everything')) {
+            deleteAllBlocks();
+            return [];
+        }
+    }
+
     // Get the workspace
     let workspace = null;
     if (window.ScratchBlocks && window.ScratchBlocks.getMainWorkspace) {
@@ -14,37 +278,256 @@ const createBlocksDirectly = (aiResponse) => {
     } else if (window.Blockly && window.Blockly.getMainWorkspace) {
         workspace = window.Blockly.getMainWorkspace();
     }
-    
+
     if (!workspace) {
         console.error('No workspace found');
         return [];
     }
-    
+
     const createdBlocks = [];
     
     try {
-        // Clear existing AI-generated blocks (optional)
-        // This prevents accumulation of old blocks
+        // Check if there are any actual commands to create (skip if empty or just delete response)
+        const hasCommands = lowerResponse.match(/move|turn|say|think|wait|repeat|forever|play|show|hide|size|go to|point|glide|change|set|if|broadcast|ask|answer|touching|key|mouse|reset/);
 
-        // Detect event block type
-        const lowerResponse = aiResponse.toLowerCase();
-        let eventBlock = null;
-        let yOffset = 150;
-        let lastBlock = null;
-
-        if (lowerResponse.includes('when this sprite clicked')) {
-            eventBlock = workspace.newBlock('event_whenthisspriteclicked');
-        } else {
-            eventBlock = workspace.newBlock('event_whenflagclicked');
+        if (!hasCommands) {
+            console.log('No block commands found in response, skipping block creation');
+            return [];
         }
-        eventBlock.initSvg();
-        eventBlock.render();
-        eventBlock.moveBy(100, 100);
-        createdBlocks.push(eventBlock);
-        lastBlock = eventBlock;
+
+        // Find existing blocks to connect to
+        const allBlocks = workspace.getAllBlocks();
+        let eventBlock = null;
+        let lastBlock = null;
+        let yOffset = 150;
+
+        // Determine which event block to use or find
+        const needsSpriteClickedEvent = lowerResponse.includes('when this sprite clicked');
+        const targetEventType = needsSpriteClickedEvent ? 'event_whenthisspriteclicked' : 'event_whenflagclicked';
+
+        // Look for existing event block of the target type
+        eventBlock = allBlocks.find(block => block.type === targetEventType);
+
+        if (eventBlock) {
+            console.log(`Found existing ${targetEventType} block, will add to it`);
+            // Find the last block in this stack
+            lastBlock = eventBlock;
+            while (lastBlock.getNextBlock()) {
+                lastBlock = lastBlock.getNextBlock();
+            }
+            // Get position for new blocks
+            const pos = lastBlock.getRelativeToSurfaceXY();
+            yOffset = pos.y + 50;
+        } else {
+            // Create new event block if none exists
+            console.log(`Creating new ${targetEventType} block`);
+            if (needsSpriteClickedEvent) {
+                eventBlock = workspace.newBlock('event_whenthisspriteclicked');
+            } else {
+                eventBlock = workspace.newBlock('event_whenflagclicked');
+            }
+            eventBlock.initSvg();
+            eventBlock.render();
+            eventBlock.moveBy(100, 100);
+            createdBlocks.push(eventBlock);
+            lastBlock = eventBlock;
+        }
 
         // Extract commands from the AI response
-        
+
+        // Track which parts of the response we've processed to avoid duplicates
+        let processedRanges = [];
+
+        // Helper to check if a match has already been processed
+        const isProcessed = (match) => {
+            const start = match.index;
+            const end = start + match[0].length;
+            return processedRanges.some(range =>
+                (start >= range.start && start < range.end) ||
+                (end > range.start && end <= range.end)
+            );
+        };
+
+        // Helper to mark a match as processed
+        const markProcessed = (match) => {
+            processedRanges.push({
+                start: match.index,
+                end: match.index + match[0].length
+            });
+        };
+
+        // Parse natural language loops FIRST (e.g., "move 10 steps forever" or "move 10 steps, turn left 15 degrees forever")
+        // Strip any intro text and match the actual command
+        const cleanedResponse = lowerResponse.replace(/^.*?(?=move|turn|wait|say|show|hide|pen)/i, '').trim();
+        const foreverPattern = /^(.+?)\s+forever\s*$/i;
+        const naturalForeverMatch = cleanedResponse.match(foreverPattern);
+
+        if (naturalForeverMatch) {
+            console.log('✓ Matched natural forever loop:', naturalForeverMatch[0]);
+            console.log('✓ Nested commands:', naturalForeverMatch[1]);
+            console.log('✓ Creating forever block with natural language syntax');
+            const foreverBlock = workspace.newBlock('control_forever');
+            foreverBlock.initSvg();
+            foreverBlock.render();
+            foreverBlock.moveBy(100, yOffset);
+
+            if (lastBlock && lastBlock.nextConnection && foreverBlock.previousConnection) {
+                lastBlock.nextConnection.connect(foreverBlock.previousConnection);
+            }
+
+            createdBlocks.push(foreverBlock);
+
+            // Parse nested commands from the captured group
+            const nestedCommands = naturalForeverMatch[1];
+            let nestedLastBlock = null;
+
+            // Parse all commands inside
+            const nestedMoves = [...nestedCommands.matchAll(/move.*?(\d+).*?steps?/g)];
+            nestedMoves.forEach(match => {
+                const steps = match[1];
+                const moveBlock = createAndConnectBlock(workspace, 'motion_movesteps', { steps },
+                    nestedLastBlock || foreverBlock, !nestedLastBlock);
+                createdBlocks.push(moveBlock);
+                nestedLastBlock = moveBlock;
+            });
+
+            const nestedTurnLeft = [...nestedCommands.matchAll(/turn.*?left.*?(\d+).*?degrees?/g)];
+            nestedTurnLeft.forEach(match => {
+                const degrees = match[1];
+                const turnBlock = createAndConnectBlock(workspace, 'motion_turnleft', { degrees },
+                    nestedLastBlock || foreverBlock, !nestedLastBlock);
+                createdBlocks.push(turnBlock);
+                nestedLastBlock = turnBlock;
+            });
+
+            const nestedTurnRight = [...nestedCommands.matchAll(/turn.*?right.*?(\d+).*?degrees?/g)];
+            nestedTurnRight.forEach(match => {
+                const degrees = match[1];
+                const turnBlock = createAndConnectBlock(workspace, 'motion_turnright', { degrees },
+                    nestedLastBlock || foreverBlock, !nestedLastBlock);
+                createdBlocks.push(turnBlock);
+                nestedLastBlock = turnBlock;
+            });
+
+            const nestedWaits = [...nestedCommands.matchAll(/wait.*?(\d+(?:\.\d+)?).*?seconds?/g)];
+            nestedWaits.forEach(match => {
+                const seconds = match[1];
+                const waitBlock = createAndConnectBlock(workspace, 'control_wait', { seconds },
+                    nestedLastBlock || foreverBlock, !nestedLastBlock);
+                createdBlocks.push(waitBlock);
+                nestedLastBlock = waitBlock;
+            });
+
+            const nestedSays = [...nestedCommands.matchAll(/say.*?['""]([^'""]*)['""](?:.*?for.*?(\d+).*?seconds?)?/g)];
+            nestedSays.forEach(match => {
+                const message = match[1];
+                const duration = match[2];
+                const blockType = duration ? 'looks_sayforsecs' : 'looks_say';
+                const sayBlock = createAndConnectBlock(workspace, blockType, { message, duration },
+                    nestedLastBlock || foreverBlock, !nestedLastBlock);
+                createdBlocks.push(sayBlock);
+                nestedLastBlock = sayBlock;
+            });
+
+            lastBlock = foreverBlock;
+            yOffset += 50;
+
+            // Skip the rest of the parsing since we handled everything
+            console.log(`Successfully created ${createdBlocks.length} blocks`);
+            return createdBlocks;
+        }
+
+        // Parse natural language repeat loops (e.g., "move 10 steps repeat 5" or "move 10 steps, turn left repeat 3")
+        // Use the same cleaned response
+        const repeatPattern = /^(.+?)\s+repeat\s+(\d+)(?:\s+times?)?\s*$/i;
+        const naturalRepeatMatch = cleanedResponse.match(repeatPattern);
+
+        if (naturalRepeatMatch) {
+            console.log('✓ Matched natural repeat loop:', naturalRepeatMatch[0]);
+            console.log('✓ Nested commands:', naturalRepeatMatch[1]);
+            console.log('✓ Creating repeat block with natural language syntax');
+            const times = naturalRepeatMatch[2];
+            console.log(`Creating repeat block for ${times} times with natural language syntax`);
+            const repeatBlock = workspace.newBlock('control_repeat');
+            repeatBlock.initSvg();
+
+            const timesInput = repeatBlock.getInput('TIMES');
+            if (timesInput) {
+                const numberBlock = workspace.newBlock('math_number');
+                numberBlock.initSvg();
+                numberBlock.setFieldValue(times, 'NUM');
+                numberBlock.render();
+                timesInput.connection.connect(numberBlock.outputConnection);
+            }
+
+            repeatBlock.render();
+            repeatBlock.moveBy(100, yOffset);
+
+            if (lastBlock && lastBlock.nextConnection && repeatBlock.previousConnection) {
+                lastBlock.nextConnection.connect(repeatBlock.previousConnection);
+            }
+
+            createdBlocks.push(repeatBlock);
+
+            // Parse nested commands
+            const nestedCommands = naturalRepeatMatch[1];
+            let nestedLastBlock = null;
+
+            const nestedMoves = [...nestedCommands.matchAll(/move.*?(\d+).*?steps?/g)];
+            nestedMoves.forEach(match => {
+                const steps = match[1];
+                const moveBlock = createAndConnectBlock(workspace, 'motion_movesteps', { steps },
+                    nestedLastBlock || repeatBlock, !nestedLastBlock);
+                createdBlocks.push(moveBlock);
+                nestedLastBlock = moveBlock;
+            });
+
+            const nestedTurnLeft = [...nestedCommands.matchAll(/turn.*?left.*?(\d+).*?degrees?/g)];
+            nestedTurnLeft.forEach(match => {
+                const degrees = match[1];
+                const turnBlock = createAndConnectBlock(workspace, 'motion_turnleft', { degrees },
+                    nestedLastBlock || repeatBlock, !nestedLastBlock);
+                createdBlocks.push(turnBlock);
+                nestedLastBlock = turnBlock;
+            });
+
+            const nestedTurnRight = [...nestedCommands.matchAll(/turn.*?right.*?(\d+).*?degrees?/g)];
+            nestedTurnRight.forEach(match => {
+                const degrees = match[1];
+                const turnBlock = createAndConnectBlock(workspace, 'motion_turnright', { degrees },
+                    nestedLastBlock || repeatBlock, !nestedLastBlock);
+                createdBlocks.push(turnBlock);
+                nestedLastBlock = turnBlock;
+            });
+
+            const nestedWaits = [...nestedCommands.matchAll(/wait.*?(\d+(?:\.\d+)?).*?seconds?/g)];
+            nestedWaits.forEach(match => {
+                const seconds = match[1];
+                const waitBlock = createAndConnectBlock(workspace, 'control_wait', { seconds },
+                    nestedLastBlock || repeatBlock, !nestedLastBlock);
+                createdBlocks.push(waitBlock);
+                nestedLastBlock = waitBlock;
+            });
+
+            const nestedSays = [...nestedCommands.matchAll(/say.*?['""]([^'""]*)['""](?:.*?for.*?(\d+).*?seconds?)?/g)];
+            nestedSays.forEach(match => {
+                const message = match[1];
+                const duration = match[2];
+                const blockType = duration ? 'looks_sayforsecs' : 'looks_say';
+                const sayBlock = createAndConnectBlock(workspace, blockType, { message, duration },
+                    nestedLastBlock || repeatBlock, !nestedLastBlock);
+                createdBlocks.push(sayBlock);
+                nestedLastBlock = sayBlock;
+            });
+
+            lastBlock = repeatBlock;
+            yOffset += 50;
+
+            // Skip the rest of the parsing
+            console.log(`Successfully created ${createdBlocks.length} blocks`);
+            return createdBlocks;
+        }
+
         // Move commands
         const moveMatches = [...lowerResponse.matchAll(/move.*?(\d+).*?steps?/g)];
         moveMatches.forEach(match => {
@@ -512,9 +995,170 @@ const createBlocksDirectly = (aiResponse) => {
             yOffset += 50;
         });
 
-        // Repeat/forever control blocks
-        const repeatMatch = /repeat (\d+)/.exec(lowerResponse);
-        if (repeatMatch) {
+        // Parse forever loops with nested blocks
+        // Format: "forever: move 10 steps, turn left 15 degrees"
+        const foreverLoopMatch = lowerResponse.match(/forever:\s*(.+?)(?=\.|$)/);
+        if (foreverLoopMatch) {
+            console.log('Creating forever block with nested content');
+            const foreverBlock = workspace.newBlock('control_forever');
+            foreverBlock.initSvg();
+            foreverBlock.render();
+            foreverBlock.moveBy(100, yOffset);
+
+            if (lastBlock && lastBlock.nextConnection && foreverBlock.previousConnection) {
+                lastBlock.nextConnection.connect(foreverBlock.previousConnection);
+            }
+
+            createdBlocks.push(foreverBlock);
+
+            // Parse nested blocks
+            const nestedCommands = foreverLoopMatch[1];
+            let nestedLastBlock = null;
+
+            // Parse move commands inside
+            const nestedMoves = [...nestedCommands.matchAll(/move.*?(\d+).*?steps?/g)];
+            nestedMoves.forEach(match => {
+                const steps = match[1];
+                const moveBlock = createAndConnectBlock(workspace, 'motion_movesteps', { steps },
+                    nestedLastBlock || foreverBlock, !nestedLastBlock);
+                createdBlocks.push(moveBlock);
+                nestedLastBlock = moveBlock;
+            });
+
+            // Parse turn commands inside
+            const nestedTurnLeft = [...nestedCommands.matchAll(/turn.*?left.*?(\d+).*?degrees?/g)];
+            nestedTurnLeft.forEach(match => {
+                const degrees = match[1];
+                const turnBlock = createAndConnectBlock(workspace, 'motion_turnleft', { degrees },
+                    nestedLastBlock || foreverBlock, !nestedLastBlock);
+                createdBlocks.push(turnBlock);
+                nestedLastBlock = turnBlock;
+            });
+
+            const nestedTurnRight = [...nestedCommands.matchAll(/turn.*?right.*?(\d+).*?degrees?/g)];
+            nestedTurnRight.forEach(match => {
+                const degrees = match[1];
+                const turnBlock = createAndConnectBlock(workspace, 'motion_turnright', { degrees },
+                    nestedLastBlock || foreverBlock, !nestedLastBlock);
+                createdBlocks.push(turnBlock);
+                nestedLastBlock = turnBlock;
+            });
+
+            // Parse wait commands inside
+            const nestedWaits = [...nestedCommands.matchAll(/wait.*?(\d+(?:\.\d+)?).*?seconds?/g)];
+            nestedWaits.forEach(match => {
+                const seconds = match[1];
+                const waitBlock = createAndConnectBlock(workspace, 'control_wait', { seconds },
+                    nestedLastBlock || foreverBlock, !nestedLastBlock);
+                createdBlocks.push(waitBlock);
+                nestedLastBlock = waitBlock;
+            });
+
+            // Parse say commands inside
+            const nestedSays = [...nestedCommands.matchAll(/say.*?['""]([^'""]*)['""](?:.*?for.*?(\d+).*?seconds?)?/g)];
+            nestedSays.forEach(match => {
+                const message = match[1];
+                const duration = match[2];
+                const blockType = duration ? 'looks_sayforsecs' : 'looks_say';
+                const sayBlock = createAndConnectBlock(workspace, blockType, { message, duration },
+                    nestedLastBlock || foreverBlock, !nestedLastBlock);
+                createdBlocks.push(sayBlock);
+                nestedLastBlock = sayBlock;
+            });
+
+            lastBlock = foreverBlock;
+            yOffset += 50;
+        }
+
+        // Parse repeat loops with nested blocks
+        // Format: "repeat 5: move 10 steps, turn left 15 degrees"
+        const repeatLoopMatch = lowerResponse.match(/repeat (\d+):\s*(.+?)(?=\.|$)/);
+        if (repeatLoopMatch) {
+            const times = repeatLoopMatch[1];
+            console.log(`Creating repeat block for ${times} times with nested content`);
+            const repeatBlock = workspace.newBlock('control_repeat');
+            repeatBlock.initSvg();
+
+            const timesInput = repeatBlock.getInput('TIMES');
+            if (timesInput) {
+                const numberBlock = workspace.newBlock('math_number');
+                numberBlock.initSvg();
+                numberBlock.setFieldValue(times, 'NUM');
+                numberBlock.render();
+                timesInput.connection.connect(numberBlock.outputConnection);
+            }
+
+            repeatBlock.render();
+            repeatBlock.moveBy(100, yOffset);
+
+            if (lastBlock && lastBlock.nextConnection && repeatBlock.previousConnection) {
+                lastBlock.nextConnection.connect(repeatBlock.previousConnection);
+            }
+
+            createdBlocks.push(repeatBlock);
+
+            // Parse nested blocks
+            const nestedCommands = repeatLoopMatch[2];
+            let nestedLastBlock = null;
+
+            // Parse move commands inside
+            const nestedMoves = [...nestedCommands.matchAll(/move.*?(\d+).*?steps?/g)];
+            nestedMoves.forEach(match => {
+                const steps = match[1];
+                const moveBlock = createAndConnectBlock(workspace, 'motion_movesteps', { steps },
+                    nestedLastBlock || repeatBlock, !nestedLastBlock);
+                createdBlocks.push(moveBlock);
+                nestedLastBlock = moveBlock;
+            });
+
+            // Parse turn commands inside
+            const nestedTurnLeft = [...nestedCommands.matchAll(/turn.*?left.*?(\d+).*?degrees?/g)];
+            nestedTurnLeft.forEach(match => {
+                const degrees = match[1];
+                const turnBlock = createAndConnectBlock(workspace, 'motion_turnleft', { degrees },
+                    nestedLastBlock || repeatBlock, !nestedLastBlock);
+                createdBlocks.push(turnBlock);
+                nestedLastBlock = turnBlock;
+            });
+
+            const nestedTurnRight = [...nestedCommands.matchAll(/turn.*?right.*?(\d+).*?degrees?/g)];
+            nestedTurnRight.forEach(match => {
+                const degrees = match[1];
+                const turnBlock = createAndConnectBlock(workspace, 'motion_turnright', { degrees },
+                    nestedLastBlock || repeatBlock, !nestedLastBlock);
+                createdBlocks.push(turnBlock);
+                nestedLastBlock = turnBlock;
+            });
+
+            // Parse wait commands inside
+            const nestedWaits = [...nestedCommands.matchAll(/wait.*?(\d+(?:\.\d+)?).*?seconds?/g)];
+            nestedWaits.forEach(match => {
+                const seconds = match[1];
+                const waitBlock = createAndConnectBlock(workspace, 'control_wait', { seconds },
+                    nestedLastBlock || repeatBlock, !nestedLastBlock);
+                createdBlocks.push(waitBlock);
+                nestedLastBlock = waitBlock;
+            });
+
+            // Parse say commands inside
+            const nestedSays = [...nestedCommands.matchAll(/say.*?['""]([^'""]*)['""](?:.*?for.*?(\d+).*?seconds?)?/g)];
+            nestedSays.forEach(match => {
+                const message = match[1];
+                const duration = match[2];
+                const blockType = duration ? 'looks_sayforsecs' : 'looks_say';
+                const sayBlock = createAndConnectBlock(workspace, blockType, { message, duration },
+                    nestedLastBlock || repeatBlock, !nestedLastBlock);
+                createdBlocks.push(sayBlock);
+                nestedLastBlock = sayBlock;
+            });
+
+            lastBlock = repeatBlock;
+            yOffset += 50;
+        }
+
+        // Standalone repeat/forever blocks (without colon syntax)
+        const repeatMatch = /repeat (\d+)(?!:)/.exec(lowerResponse);
+        if (repeatMatch && !repeatLoopMatch) {
             const times = repeatMatch[1];
             console.log(`Creating repeat block for ${times} times`);
             const repeatBlock = workspace.newBlock('control_repeat');
@@ -536,7 +1180,7 @@ const createBlocksDirectly = (aiResponse) => {
             lastBlock = repeatBlock;
             yOffset += 50;
         }
-        if (/repeat forever|forever/.test(lowerResponse)) {
+        if (/(?:repeat )?forever(?!:)/.test(lowerResponse) && !foreverLoopMatch) {
             console.log('Creating forever block');
             const foreverBlock = workspace.newBlock('control_forever');
             foreverBlock.initSvg();
@@ -627,6 +1271,238 @@ const createBlocksDirectly = (aiResponse) => {
             lastBlock = changeBlock;
             yOffset += 50;
         }
+
+        // More Looks blocks
+        if (/\bshow\b/.test(lowerResponse)) {
+            const block = workspace.newBlock('looks_show');
+            block.initSvg();
+            block.render();
+            block.moveBy(100, yOffset);
+            if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                lastBlock.nextConnection.connect(block.previousConnection);
+            }
+            createdBlocks.push(block);
+            lastBlock = block;
+            yOffset += 50;
+        }
+
+        if (/\bhide\b/.test(lowerResponse)) {
+            const block = workspace.newBlock('looks_hide');
+            block.initSvg();
+            block.render();
+            block.moveBy(100, yOffset);
+            if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                lastBlock.nextConnection.connect(block.previousConnection);
+            }
+            createdBlocks.push(block);
+            lastBlock = block;
+            yOffset += 50;
+        }
+
+        const changeSizeMatch = /change size by (-?\d+)/.exec(lowerResponse);
+        if (changeSizeMatch) {
+            const value = changeSizeMatch[1];
+            const block = workspace.newBlock('looks_changesizeby');
+            block.initSvg();
+            const input = block.getInput('CHANGE');
+            if (input) {
+                const numberBlock = workspace.newBlock('math_number');
+                numberBlock.initSvg();
+                numberBlock.setFieldValue(value, 'NUM');
+                numberBlock.render();
+                input.connection.connect(numberBlock.outputConnection);
+            }
+            block.render();
+            block.moveBy(100, yOffset);
+            if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                lastBlock.nextConnection.connect(block.previousConnection);
+            }
+            createdBlocks.push(block);
+            lastBlock = block;
+            yOffset += 50;
+        }
+
+        const setSizeMatch = /set size to (\d+)/.exec(lowerResponse);
+        if (setSizeMatch) {
+            const value = setSizeMatch[1];
+            const block = workspace.newBlock('looks_setsizeto');
+            block.initSvg();
+            const input = block.getInput('SIZE');
+            if (input) {
+                const numberBlock = workspace.newBlock('math_number');
+                numberBlock.initSvg();
+                numberBlock.setFieldValue(value, 'NUM');
+                numberBlock.render();
+                input.connection.connect(numberBlock.outputConnection);
+            }
+            block.render();
+            block.moveBy(100, yOffset);
+            if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                lastBlock.nextConnection.connect(block.previousConnection);
+            }
+            createdBlocks.push(block);
+            lastBlock = block;
+            yOffset += 50;
+        }
+
+        // More Motion blocks
+        const gotoXYMatch = /go to x:?\s*(-?\d+)\s*y:?\s*(-?\d+)/.exec(lowerResponse);
+        if (gotoXYMatch) {
+            const x = gotoXYMatch[1], y = gotoXYMatch[2];
+            const block = workspace.newBlock('motion_gotoxy');
+            block.initSvg();
+            const xInput = block.getInput('X');
+            const yInput = block.getInput('Y');
+            if (xInput) {
+                const xNum = workspace.newBlock('math_number');
+                xNum.initSvg();
+                xNum.setFieldValue(x, 'NUM');
+                xNum.render();
+                xInput.connection.connect(xNum.outputConnection);
+            }
+            if (yInput) {
+                const yNum = workspace.newBlock('math_number');
+                yNum.initSvg();
+                yNum.setFieldValue(y, 'NUM');
+                yNum.render();
+                yInput.connection.connect(yNum.outputConnection);
+            }
+            block.render();
+            block.moveBy(100, yOffset);
+            if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                lastBlock.nextConnection.connect(block.previousConnection);
+            }
+            createdBlocks.push(block);
+            lastBlock = block;
+            yOffset += 50;
+        }
+
+        if (/point in direction 90|point right/.test(lowerResponse)) {
+            const block = workspace.newBlock('motion_pointindirection');
+            block.initSvg();
+            const input = block.getInput('DIRECTION');
+            if (input) {
+                const num = workspace.newBlock('math_number');
+                num.initSvg();
+                num.setFieldValue('90', 'NUM');
+                num.render();
+                input.connection.connect(num.outputConnection);
+            }
+            block.render();
+            block.moveBy(100, yOffset);
+            if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                lastBlock.nextConnection.connect(block.previousConnection);
+            }
+            createdBlocks.push(block);
+            lastBlock = block;
+            yOffset += 50;
+        }
+
+        // Sensing blocks
+        if (/ask .+ and wait/.test(lowerResponse)) {
+            const askMatch = /ask ['"]([^'"]+)['"] and wait/.exec(lowerResponse);
+            if (askMatch) {
+                const question = askMatch[1];
+                const block = workspace.newBlock('sensing_askandwait');
+                block.initSvg();
+                const input = block.getInput('QUESTION');
+                if (input) {
+                    const textBlock = workspace.newBlock('text');
+                    textBlock.initSvg();
+                    textBlock.setFieldValue(question, 'TEXT');
+                    textBlock.render();
+                    input.connection.connect(textBlock.outputConnection);
+                }
+                block.render();
+                block.moveBy(100, yOffset);
+                if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                    lastBlock.nextConnection.connect(block.previousConnection);
+                }
+                createdBlocks.push(block);
+                lastBlock = block;
+                yOffset += 50;
+            }
+        }
+
+        if (/reset timer/.test(lowerResponse)) {
+            const block = workspace.newBlock('sensing_resettimer');
+            block.initSvg();
+            block.render();
+            block.moveBy(100, yOffset);
+            if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                lastBlock.nextConnection.connect(block.previousConnection);
+            }
+            createdBlocks.push(block);
+            lastBlock = block;
+            yOffset += 50;
+        }
+
+        // Events
+        if (/broadcast ['"]([^'"]+)['"]/.test(lowerResponse)) {
+            const broadcastMatch = /broadcast ['"]([^'"]+)['"]/.exec(lowerResponse);
+            if (broadcastMatch) {
+                const message = broadcastMatch[1];
+                const block = workspace.newBlock('event_broadcast');
+                block.initSvg();
+                const input = block.getInput('BROADCAST_INPUT');
+                if (input) {
+                    const textBlock = workspace.newBlock('text');
+                    textBlock.initSvg();
+                    textBlock.setFieldValue(message, 'TEXT');
+                    textBlock.render();
+                    input.connection.connect(textBlock.outputConnection);
+                }
+                block.render();
+                block.moveBy(100, yOffset);
+                if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                    lastBlock.nextConnection.connect(block.previousConnection);
+                }
+                createdBlocks.push(block);
+                lastBlock = block;
+                yOffset += 50;
+            }
+        }
+
+        // Pen blocks
+        if (/pen down/.test(lowerResponse)) {
+            const block = workspace.newBlock('pen_penDown');
+            block.initSvg();
+            block.render();
+            block.moveBy(100, yOffset);
+            if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                lastBlock.nextConnection.connect(block.previousConnection);
+            }
+            createdBlocks.push(block);
+            lastBlock = block;
+            yOffset += 50;
+        }
+
+        if (/pen up/.test(lowerResponse)) {
+            const block = workspace.newBlock('pen_penUp');
+            block.initSvg();
+            block.render();
+            block.moveBy(100, yOffset);
+            if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                lastBlock.nextConnection.connect(block.previousConnection);
+            }
+            createdBlocks.push(block);
+            lastBlock = block;
+            yOffset += 50;
+        }
+
+        if (/clear/.test(lowerResponse) && !lowerResponse.includes('delete')) {
+            const block = workspace.newBlock('pen_clear');
+            block.initSvg();
+            block.render();
+            block.moveBy(100, yOffset);
+            if (lastBlock && lastBlock.nextConnection && block.previousConnection) {
+                lastBlock.nextConnection.connect(block.previousConnection);
+            }
+            createdBlocks.push(block);
+            lastBlock = block;
+            yOffset += 50;
+        }
+
         console.log(`Successfully created ${createdBlocks.length} blocks`);
         
     } catch (error) {
@@ -639,6 +1515,9 @@ const createBlocksDirectly = (aiResponse) => {
 // Export for use
 if (typeof window !== 'undefined') {
     window.createBlocksDirectly = createBlocksDirectly;
+    window.deleteAllBlocks = deleteAllBlocks;
+    window.deleteSpecificBlocks = deleteSpecificBlocks;
+    window.updateBlockValue = updateBlockValue;
 }
 
-export { createBlocksDirectly };
+export { createBlocksDirectly, deleteAllBlocks, deleteSpecificBlocks, updateBlockValue };
