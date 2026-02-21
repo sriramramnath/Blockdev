@@ -1,4 +1,4 @@
-# Codyssey
+# Codyssey AI
 
 Codyssey is a web-based visual programming environment inspired by Scratch, but supercharged with AI. Build programs using drag-and-drop blocks, and let **Maximus**, your AI coding companion, help you create them from natural language prompts.
 
